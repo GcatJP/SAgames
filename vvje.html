@@ -1,0 +1,768 @@
+<!doctype html>
+<!-- saved from url=(0056)file:///Users/graemecattermole/Downloads/verbquiz_2.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS Home Screen behaviour -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Noun Quiz" />
+
+    <title>Vocabulary Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link href="./Noun Quiz_files/css2" rel="stylesheet" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --font-chalk:
+          "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
+        --font-jp:
+          "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        --colour-btn-face: darkgrey;
+        --colour-btn-active: darkgrey;
+        --colour-btn-border: #000000;
+        --colour-heading-text: orange;
+        --colour-correct: #4caf50;
+        --colour-wrong: #e53935;
+        --colour-dim: #f0f0f0;
+      }
+
+      .rotate-message {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: grey;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2em;
+      }
+      .rotate-message p {
+        color: var(--colour-heading-text);
+        -webkit-text-stroke: 0.8px darkorange;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        line-height: 1.4;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        font-family: var(--font-chalk);
+        background-color: grey; /* dark pink */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      h1 {
+        font-family: var(--font-chalk);
+        color: var(--colour-heading-text);
+        width: 100%;
+        text-align: center;
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+        -webkit-text-stroke: 1px yellow;
+        font-size: clamp(1.5rem, 8vw, 3.5rem);
+        padding: 0.4em 0.5em 0.2em;
+        margin-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
+
+      .progress {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-weight: bold;
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
+        text-align: center;
+        margin-bottom: 0.5em;
+        flex-shrink: 0;
+      }
+
+      /* START SCREEN */
+      .start-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3vh;
+        width: 100%;
+        padding: 2vh 6vw;
+      }
+
+      .start-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.3rem, 6vw, 2rem);
+        text-align: center;
+      }
+
+      .start-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .game-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+      }
+
+      .question-card {
+        background: white;
+        border: 3px solid var(--colour-btn-border);
+        border-radius: 20px;
+        padding: 0.8em 1em;
+        margin-bottom: 4vh;
+        text-align: center;
+        width: 100%;
+        max-width: 480px;
+      }
+      .question-jp {
+        font-size: clamp(2rem, 11vw, 4.5rem);
+        color: #333;
+        font-family: var(--font-jp); /* changed back from var(--font-jp) */
+        line-height: 1.3;
+      }
+
+      .answers {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 4vw, 24px);
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .btn {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        transition:
+          transform 0.1s ease,
+          background 0.15s ease;
+        font-size: clamp(1.1rem, 6vw, 2rem);
+        height: clamp(60px, 12vh, 100px);
+        padding: 0 0.6em;
+      }
+      .answers .btn {
+        font-family: var(--font-jp);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn.correct {
+        background: var(--colour-correct);
+        color: white;
+      }
+
+      .btn.wrong {
+        background: var(--colour-wrong);
+        color: white;
+      }
+
+      .btn.dim {
+        background: var(--colour-dim);
+        color: #999;
+      }
+
+      .btn:disabled {
+        cursor: default;
+      }
+
+      /* RESULTS SCREEN */
+      .results-wrapper {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+        overflow-y: auto;
+      }
+
+      .score {
+        color: white;
+        -webkit-text-stroke: 1.5px darkorange;
+        font-size: clamp(2rem, 10vw, 4rem);
+        text-align: center;
+        margin-bottom: 0.3em;
+      }
+
+      .score-sub {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1rem, 5vw, 1.6rem);
+        text-align: center;
+        margin-bottom: 1em;
+      }
+
+      .mistakes-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        text-align: center;
+        margin-bottom: 0.6em;
+      }
+
+      .mistakes-list {
+        list-style: none;
+        width: 100%;
+        max-width: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 2em;
+      }
+
+      .mistakes-list li {
+        background: white;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 12px;
+        padding: 0.6em 1em;
+        font-family: var(--font-chalk);
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        font-size: clamp(0.95rem, 4vw, 1.3rem);
+      }
+
+      .mistakes-list .jp {
+        font-weight: bold;
+        font-family: var(--font-jp);
+      }
+
+      .mistakes-list .en {
+        color: var(--colour-wrong);
+        font-weight: bold;
+        text-align: right;
+      }
+
+      .play-again {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 0.7em 1.6em;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+        transition: transform 0.1s ease;
+      }
+      .play-again:active {
+        transform: scale(0.97);
+        background: var(--colour-btn-active);
+      }
+
+      /* LANDSCAPE IPHONE - ask to rotate */
+      @media screen and (orientation: landscape) and (max-height: 450px) {
+        .rotate-message {
+          display: flex;
+        }
+        h1,
+        .progress,
+        .start-wrapper,
+        .game-wrapper,
+        .results-wrapper,
+        .back-btn {
+          display: none;
+        }
+      }
+
+      /* PORTRAIT IPHONE tweaks */
+      @media screen and (orientation: portrait) and (max-width: 430px) {
+        h1 {
+          font-size: clamp(1.3rem, 9vw, 2.4rem) !important;
+          margin-top: max(50px, env(safe-area-inset-top, 50px)) !important;
+        }
+        .game-wrapper {
+          padding: 1vh 6vw 3vh;
+        }
+        .question-card {
+          margin-bottom: 3vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rotate-message">
+      <p>🔄 Please rotate your device to portrait mode!</p>
+    </div>
+
+    <a class="back-btn" href="vv.html">← Back</a>
+    <h1>Verbs Quiz</h1>
+    <div class="progress" id="progress" style="display: none">
+      Question 1 / 20
+    </div>
+
+    <div class="start-wrapper" id="startWrapper">
+      <div class="start-title">How many questions?</div>
+      <div class="start-buttons">
+        <button class="btn" data-count="20">20</button>
+        <button class="btn" data-count="30">30</button>
+        <button class="btn" data-count="40">40</button>
+      </div>
+    </div>
+
+    <div class="game-wrapper" id="gameWrapper" style="display: none">
+      <div class="question-card">
+        <div class="question-jp" id="questionJp"></div>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper" style="display: none">
+      <div class="score" id="score"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="mistakes-title" id="mistakesTitle" style="display: none">
+        Words to review
+      </div>
+      <ul class="mistakes-list" id="mistakesList"></ul>
+      <button class="play-again" id="playAgainBtn">Play Again</button>
+    </div>
+
+    <script>
+      // ---- Noun bank: English noun + Japanese meaning ----
+      const VERB_BANK = [
+        { en: "agree", jp: "同意する" },
+        { en: "allow", jp: "許す" },
+        { en: "answer", jp: "答える" },
+        { en: "arrive", jp: "到着する" },
+        { en: "ask", jp: "尋ねる" },
+        { en: "bake", jp: "焼く" },
+        { en: "become", jp: "なる" },
+        { en: "begin", jp: "始まる" },
+        { en: "believe", jp: "信じる" },
+        { en: "belong", jp: "属する" },
+        { en: "boil", jp: "沸かす" },
+        { en: "borrow", jp: "借りる" },
+        { en: "break", jp: "壊す" },
+        { en: "bring", jp: "持ってくる" },
+        { en: "brush", jp: "ブラシをかける" },
+        { en: "build", jp: "建てる" },
+        { en: "buy", jp: "買う" },
+        { en: "call", jp: "電話する" },
+        { en: "camp", jp: "キャンプする" },
+        { en: "carry", jp: "運ぶ" },
+        { en: "catch", jp: "捕まえる" },
+        { en: "change", jp: "変える" },
+        { en: "check", jp: "確認する" },
+        { en: "choose", jp: "選ぶ" },
+        { en: "clean", jp: "掃除する" },
+        { en: "click", jp: "クリックする" },
+        { en: "climb", jp: "登る" },
+        { en: "close", jp: "閉める" },
+        { en: "collect", jp: "集める" },
+        { en: "come", jp: "来る" },
+        { en: "complete", jp: "完成させる" },
+        { en: "continue", jp: "続ける" },
+        { en: "cook", jp: "料理する" },
+        { en: "copy", jp: "コピーする" },
+        { en: "cost", jp: "値段がかかる" },
+        { en: "cover", jp: "覆う" },
+        { en: "cross", jp: "渡る" },
+        { en: "cry", jp: "泣く" },
+        { en: "cut", jp: "切る" },
+        { en: "cycle", jp: "サイクリングする" },
+        { en: "dance", jp: "踊る" },
+        { en: "decide", jp: "決める" },
+        { en: "describe", jp: "説明する" },
+        { en: "die", jp: "死ぬ" },
+        { en: "dive", jp: "飛び込む" },
+        { en: "download", jp: "ダウンロードする" },
+        { en: "draw", jp: "描く" },
+        { en: "dream", jp: "夢を見る" },
+        { en: "dress", jp: "服を着せる" },
+        { en: "drink", jp: "飲む" },
+        { en: "drive", jp: "運転する" },
+        { en: "dry", jp: "乾かす" },
+        { en: "earn", jp: "稼ぐ" },
+        { en: "eat", jp: "食べる" },
+        { en: "email", jp: "メールする" },
+        { en: "end", jp: "終わる" },
+        { en: "enjoy", jp: "楽しむ" },
+        { en: "enter", jp: "入る" },
+        { en: "excuse", jp: "許す" },
+        { en: "exercise", jp: "運動する" },
+        { en: "explain", jp: "説明する" },
+        { en: "explore", jp: "探検する" },
+        { en: "fail", jp: "失敗する" },
+        { en: "fall", jp: "落ちる" },
+        { en: "feel", jp: "感じる" },
+        { en: "fill", jp: "いっぱいにする" },
+        { en: "film", jp: "撮影する" },
+        { en: "find", jp: "見つける" },
+        { en: "finish", jp: "終える" },
+        { en: "fish", jp: "釣りをする" },
+        { en: "fly", jp: "飛ぶ" },
+        { en: "follow", jp: "ついていく" },
+        { en: "forget", jp: "忘れる" },
+        { en: "get", jp: "手に入れる" },
+        { en: "give", jp: "与える" },
+        { en: "go", jp: "行く" },
+        { en: "grow", jp: "育つ" },
+        { en: "guess", jp: "推測する" },
+        { en: "happen", jp: "起こる" },
+        { en: "hate", jp: "嫌う" },
+        { en: "have", jp: "持っている" },
+        { en: "hear", jp: "聞こえる" },
+        { en: "help", jp: "手伝う" },
+        { en: "hit", jp: "打つ" },
+        { en: "hold", jp: "持つ" },
+        { en: "hope", jp: "望む" },
+        { en: "hurry", jp: "急ぐ" },
+        { en: "hurt", jp: "傷つける" },
+        { en: "improve", jp: "改善する" },
+        { en: "include", jp: "含む" },
+        { en: "invite", jp: "招待する" },
+        { en: "join", jp: "参加する" },
+        { en: "jump", jp: "跳ぶ" },
+        { en: "keep", jp: "保つ" },
+        { en: "kick", jp: "蹴る" },
+        { en: "kiss", jp: "キスする" },
+        { en: "know", jp: "知っている" },
+        { en: "laugh", jp: "笑う" },
+        { en: "learn", jp: "学ぶ" },
+        { en: "leave", jp: "去る" },
+        { en: "lend", jp: "貸す" },
+        { en: "like", jp: "好き" },
+        { en: "listen", jp: "聞く" },
+        { en: "live", jp: "住む" },
+        { en: "look", jp: "見る" },
+        { en: "lose", jp: "失う" },
+        { en: "love", jp: "愛する" },
+        { en: "make", jp: "作る" },
+        { en: "matter", jp: "重要である" },
+        { en: "mean", jp: "意味する" },
+        { en: "meet", jp: "会う" },
+        { en: "mind", jp: "気にする" },
+        { en: "miss", jp: "逃す" },
+        { en: "mix", jp: "混ぜる" },
+        { en: "move", jp: "動く" },
+        { en: "need", jp: "必要とする" },
+        { en: "offer", jp: "提供する" },
+        { en: "open", jp: "開ける" },
+        { en: "order", jp: "注文する" },
+        { en: "pack", jp: "荷造りする" },
+        { en: "paint", jp: "絵を描く" },
+        { en: "park", jp: "駐車する" },
+        { en: "pass", jp: "合格する" },
+        { en: "pay", jp: "払う" },
+        { en: "phone", jp: "電話する" },
+        { en: "plan", jp: "計画する" },
+        { en: "play", jp: "遊ぶ" },
+        { en: "point", jp: "指さす" },
+        { en: "post", jp: "投函する" },
+        { en: "practise", jp: "練習する" },
+        { en: "prefer", jp: "好む" },
+        { en: "prepare", jp: "準備する" },
+        { en: "print", jp: "印刷する" },
+        { en: "pull", jp: "引く" },
+        { en: "push", jp: "押す" },
+        { en: "put", jp: "置く" },
+        { en: "race", jp: "競争する" },
+        { en: "rain", jp: "雨が降る" },
+        { en: "read", jp: "読む" },
+        { en: "receive", jp: "受け取る" },
+        { en: "record", jp: "記録する" },
+        { en: "remember", jp: "覚えている" },
+        { en: "rent", jp: "賃借りする" },
+        { en: "repair", jp: "修理する" },
+        { en: "repeat", jp: "繰り返す" },
+        { en: "rest", jp: "休む" },
+        { en: "return", jp: "戻る" },
+        { en: "ride", jp: "乗る" },
+        { en: "ring", jp: "鳴る" },
+        { en: "run", jp: "走る" },
+        { en: "sail", jp: "航海する" },
+        { en: "save", jp: "貯める" },
+        { en: "say", jp: "言う" },
+        { en: "see", jp: "見る" },
+        { en: "seem", jp: "〜のように見える" },
+        { en: "sell", jp: "売る" },
+        { en: "send", jp: "送る" },
+        { en: "serve", jp: "提供する" },
+        { en: "share", jp: "共有する" },
+        { en: "shout", jp: "叫ぶ" },
+        { en: "show", jp: "見せる" },
+        { en: "shut", jp: "閉める" },
+        { en: "sing", jp: "歌う" },
+        { en: "sit", jp: "座る" },
+        { en: "skate", jp: "スケートをする" },
+        { en: "ski", jp: "スキーをする" },
+        { en: "sleep", jp: "眠る" },
+        { en: "smoke", jp: "タバコを吸う" },
+        { en: "sound", jp: "聞こえる" },
+        { en: "speak", jp: "話す" },
+        { en: "spell", jp: "つづる" },
+        { en: "spend", jp: "使う" },
+        { en: "stand", jp: "立つ" },
+        { en: "start", jp: "始める" },
+        { en: "stay", jp: "滞在する" },
+        { en: "steal", jp: "盗む" },
+        { en: "stop", jp: "止まる" },
+        { en: "study", jp: "勉強する" },
+        { en: "suggest", jp: "提案する" },
+        { en: "suppose", jp: "思う" },
+        { en: "surf", jp: "サーフィンする" },
+        { en: "swim", jp: "泳ぐ" },
+        { en: "take", jp: "取る" },
+        { en: "talk", jp: "話す" },
+        { en: "teach", jp: "教える" },
+        { en: "telephone", jp: "電話する" },
+        { en: "tell", jp: "伝える" },
+        { en: "text", jp: "メッセージを送る" },
+        { en: "thank", jp: "感謝する" },
+        { en: "think", jp: "考える" },
+        { en: "throw", jp: "投げる" },
+        { en: "tidy", jp: "片付ける" },
+        { en: "travel", jp: "旅行する" },
+        { en: "try", jp: "試す" },
+        { en: "turn", jp: "曲がる" },
+        { en: "understand", jp: "理解する" },
+        { en: "upload", jp: "アップロードする" },
+        { en: "use", jp: "使う" },
+        { en: "visit", jp: "訪れる" },
+        { en: "wait", jp: "待つ" },
+        { en: "wake", jp: "目が覚める" },
+        { en: "walk", jp: "歩く" },
+        { en: "want", jp: "欲しい" },
+        { en: "wash", jp: "洗う" },
+        { en: "watch", jp: "見る" },
+        { en: "wear", jp: "着る" },
+        { en: "win", jp: "勝つ" },
+        { en: "work", jp: "働く" },
+        { en: "worry", jp: "心配する" },
+        { en: "write", jp: "書く" },
+      ];
+
+      let QUESTIONS_PER_GAME = 20; // now variable, set by start-screen buttons
+
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let wrongAnswers = [];
+
+      const startWrapper = document.getElementById("startWrapper");
+      const gameWrapper = document.getElementById("gameWrapper");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const questionJpEl = document.getElementById("questionJp");
+      const answersEl = document.getElementById("answers");
+      const progressEl = document.getElementById("progress");
+      const scoreEl = document.getElementById("score");
+      const scoreSubEl = document.getElementById("scoreSub");
+      const mistakesTitleEl = document.getElementById("mistakesTitle");
+      const mistakesListEl = document.getElementById("mistakesList");
+      const playAgainBtn = document.getElementById("playAgainBtn");
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function startGame() {
+        questions = shuffle(VERB_BANK).slice(0, QUESTIONS_PER_GAME);
+        currentIndex = 0;
+        score = 0;
+        wrongAnswers = [];
+        startWrapper.style.display = "none";
+        resultsWrapper.style.display = "none";
+        gameWrapper.style.display = "flex";
+        progressEl.style.display = "block";
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const q = questions[currentIndex];
+        progressEl.textContent =
+          "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
+        questionJpEl.textContent = q.jp; // changed from q.jp
+
+        const distractorPool = VERB_BANK.filter((v) => v.en !== q.en);
+        const distractors = shuffle(distractorPool).slice(0, 2);
+        const options = shuffle([q, ...distractors]);
+
+        answersEl.innerHTML = "";
+        options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.textContent = opt.en; // changed from opt.en
+          btn.addEventListener("click", () => handleAnswer(opt, q, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(selected, correctQ, clickedBtn) {
+        const allBtns = answersEl.querySelectorAll(".btn");
+        allBtns.forEach((b) => (b.disabled = true));
+
+        const isCorrect = selected.en === correctQ.en;
+
+        allBtns.forEach((b) => {
+          if (b.textContent === correctQ.en) {
+            b.classList.add("correct");
+          } else if (b === clickedBtn) {
+            b.classList.add("wrong");
+          } else {
+            b.classList.add("dim");
+          }
+        });
+
+        if (isCorrect) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            jp: correctQ.jp,
+            correct: correctQ.en,
+            chosen: selected.en,
+          });
+        }
+
+        setTimeout(() => {
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        }, 900);
+      }
+      function showResults() {
+        gameWrapper.style.display = "none";
+        progressEl.style.display = "none";
+        resultsWrapper.style.display = "flex";
+
+        scoreEl.textContent = score + " / " + QUESTIONS_PER_GAME;
+        if (score === QUESTIONS_PER_GAME) {
+          scoreSubEl.textContent = "Perfect score! 🎉";
+        } else if (score >= QUESTIONS_PER_GAME * 0.7) {
+          scoreSubEl.textContent = "Great job!";
+        } else {
+          scoreSubEl.textContent = "Keep practising!";
+        }
+
+        mistakesListEl.innerHTML = "";
+        if (wrongAnswers.length > 0) {
+          mistakesTitleEl.style.display = "block";
+          wrongAnswers.forEach((w) => {
+            const li = document.createElement("li");
+            const jpSpan = document.createElement("span");
+            jpSpan.className = "jp";
+            jpSpan.textContent = w.jp;
+            const enSpan = document.createElement("span");
+            enSpan.className = "en";
+            enSpan.textContent = w.correct;
+            li.appendChild(jpSpan);
+            li.appendChild(enSpan);
+            mistakesListEl.appendChild(li);
+          });
+        } else {
+          mistakesTitleEl.style.display = "none";
+        }
+      }
+
+      // start-screen buttons pick the question count and begin the game
+      document.querySelectorAll(".start-buttons .btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          QUESTIONS_PER_GAME = parseInt(btn.dataset.count, 10);
+          startGame();
+        });
+      });
+
+      // play again re-shows the start screen so a new count can be picked
+      playAgainBtn.addEventListener("click", () => {
+        resultsWrapper.style.display = "none";
+        startWrapper.style.display = "flex";
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1560 @@
+<!doctype html>
+<!-- saved from url=(0056)file:///Users/graemecattermole/Downloads/verbquiz_2.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS Home Screen behaviour -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Noun Quiz" />
+
+    <title>Noun Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link href="./Noun Quiz_files/css2" rel="stylesheet" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --font-chalk:
+          "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
+        --font-jp:
+          "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        --colour-btn-face: #8b5a2b;
+        --colour-btn-active: #8b5a2b;
+        --colour-btn-border: #000000;
+        --colour-heading-text: orange;
+        --colour-correct: #4caf50;
+        --colour-wrong: #e53935;
+        --colour-dim: #f0f0f0;
+      }
+
+      .rotate-message {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: darkred;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2em;
+      }
+      .rotate-message p {
+        color: var(--colour-heading-text);
+        -webkit-text-stroke: 0.8px darkorange;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        line-height: 1.4;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        font-family: var(--font-chalk);
+        background-color: darkred; /* dark pink */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      h1 {
+        font-family: var(--font-chalk);
+        color: var(--colour-heading-text);
+        width: 100%;
+        text-align: center;
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+        -webkit-text-stroke: 1px yellow;
+        font-size: clamp(1.5rem, 8vw, 3.5rem);
+        padding: 0.4em 0.5em 0.2em;
+        margin-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
+
+      .progress {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-weight: bold;
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
+        text-align: center;
+        margin-bottom: 0.5em;
+        flex-shrink: 0;
+      }
+
+      /* START SCREEN */
+      .start-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3vh;
+        width: 100%;
+        padding: 2vh 6vw;
+      }
+
+      .start-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.3rem, 6vw, 2rem);
+        text-align: center;
+      }
+
+      .start-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .game-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+      }
+
+      .question-card {
+        background: white;
+        border: 3px solid var(--colour-btn-border);
+        border-radius: 20px;
+        padding: 0.8em 1em;
+        margin-bottom: 4vh;
+        text-align: center;
+        width: 100%;
+        max-width: 480px;
+      }
+      .question-jp {
+        font-size: clamp(2rem, 11vw, 4.5rem);
+        color: #333;
+        font-family: var(--font-chalk);
+        line-height: 1.3;
+      }
+
+      .answers {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 4vw, 24px);
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .btn {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        transition:
+          transform 0.1s ease,
+          background 0.15s ease;
+        font-size: clamp(1.1rem, 6vw, 2rem);
+        height: clamp(60px, 12vh, 100px);
+        padding: 0 0.6em;
+      }
+      .answers .btn {
+        font-family: var(--font-jp);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn.correct {
+        background: var(--colour-correct);
+        color: white;
+      }
+
+      .btn.wrong {
+        background: var(--colour-wrong);
+        color: white;
+      }
+
+      .btn.dim {
+        background: var(--colour-dim);
+        color: #999;
+      }
+
+      .btn:disabled {
+        cursor: default;
+      }
+
+      /* RESULTS SCREEN */
+      .results-wrapper {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+        overflow-y: auto;
+      }
+
+      .score {
+        color: white;
+        -webkit-text-stroke: 1.5px darkorange;
+        font-size: clamp(2rem, 10vw, 4rem);
+        text-align: center;
+        margin-bottom: 0.3em;
+      }
+
+      .score-sub {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1rem, 5vw, 1.6rem);
+        text-align: center;
+        margin-bottom: 1em;
+      }
+
+      .mistakes-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        text-align: center;
+        margin-bottom: 0.6em;
+      }
+
+      .mistakes-list {
+        list-style: none;
+        width: 100%;
+        max-width: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 2em;
+      }
+
+      .mistakes-list li {
+        background: white;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 12px;
+        padding: 0.6em 1em;
+        font-family: var(--font-chalk);
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        font-size: clamp(0.95rem, 4vw, 1.3rem);
+      }
+
+      .mistakes-list .jp {
+        font-weight: bold;
+        font-family: var(--font-jp);
+      }
+
+      .mistakes-list .en {
+        color: var(--colour-wrong);
+        font-weight: bold;
+        text-align: right;
+      }
+
+      .play-again {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 0.7em 1.6em;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+        transition: transform 0.1s ease;
+      }
+      .play-again:active {
+        transform: scale(0.97);
+        background: var(--colour-btn-active);
+      }
+
+      /* LANDSCAPE IPHONE - ask to rotate */
+      @media screen and (orientation: landscape) and (max-height: 450px) {
+        .rotate-message {
+          display: flex;
+        }
+        h1,
+        .progress,
+        .start-wrapper,
+        .game-wrapper,
+        .results-wrapper,
+        .back-btn {
+          display: none;
+        }
+      }
+
+      /* PORTRAIT IPHONE tweaks */
+      @media screen and (orientation: portrait) and (max-width: 430px) {
+        h1 {
+          font-size: clamp(1.3rem, 9vw, 2.4rem) !important;
+          margin-top: max(50px, env(safe-area-inset-top, 50px)) !important;
+        }
+        .game-wrapper {
+          padding: 1vh 6vw 3vh;
+        }
+        .question-card {
+          margin-bottom: 3vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rotate-message">
+      <p>🔄 Please rotate your device to portrait mode!</p>
+    </div>
+
+    <a class="back-btn" href="vn1.html">← Back</a>
+    <h1>Nouns Quiz</h1>
+    <div class="progress" id="progress" style="display: none">
+      Question 1 / 20
+    </div>
+
+    <div class="start-wrapper" id="startWrapper">
+      <div class="start-title">How many questions?</div>
+      <div class="start-buttons">
+        <button class="btn" data-count="20">20</button>
+        <button class="btn" data-count="30">30</button>
+        <button class="btn" data-count="40">40</button>
+      </div>
+    </div>
+
+    <div class="game-wrapper" id="gameWrapper" style="display: none">
+      <div class="question-card">
+        <div class="question-jp" id="questionJp"></div>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper" style="display: none">
+      <div class="score" id="score"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="mistakes-title" id="mistakesTitle" style="display: none">
+        Words to review
+      </div>
+      <ul class="mistakes-list" id="mistakesList"></ul>
+      <button class="play-again" id="playAgainBtn">Play Again</button>
+    </div>
+
+    <script>
+      // ---- Noun bank: English noun + Japanese meaning ----
+      const VERB_BANK = [
+        { en: "ability", jp: "能力" },
+        { en: "accent", jp: "アクセント" },
+        { en: "access", jp: "アクセス" },
+        { en: "accident", jp: "事故" },
+        { en: "accommodation", jp: "宿泊施設" },
+        { en: "account", jp: "口座" },
+        { en: "accountant", jp: "会計士" },
+        { en: "achievement", jp: "業績" },
+        { en: "action", jp: "行動" },
+        { en: "activity", jp: "活動" },
+        { en: "actor", jp: "俳優" },
+        { en: "actress", jp: "女優" },
+        { en: "address", jp: "住所" },
+        { en: "admission", jp: "入場" },
+        { en: "adult", jp: "大人" },
+        { en: "advantage", jp: "利点" },
+        { en: "advertisement", jp: "広告" },
+        { en: "advice", jp: "アドバイス" },
+        { en: "aeroplane", jp: "飛行機" },
+        { en: "afternoon", jp: "午後" },
+        { en: "age", jp: "年齢" },
+        { en: "agency", jp: "代理店" },
+        { en: "aim", jp: "目標" },
+        { en: "air", jp: "空気" },
+        { en: "air conditioning", jp: "エアコン" },
+        { en: "airline", jp: "航空会社" },
+        { en: "airport", jp: "空港" },
+        { en: "alarm clock", jp: "目覚まし時計" },
+        { en: "album", jp: "アルバム" },
+        { en: "ambition", jp: "野心" },
+        { en: "ambulance", jp: "救急車" },
+        { en: "amount", jp: "金額" },
+        { en: "animal", jp: "動物" },
+        { en: "ankle", jp: "足首" },
+        { en: "anniversary", jp: "記念日" },
+        { en: "answer", jp: "答え" },
+        { en: "ant", jp: "アリ" },
+        { en: "apartment", jp: "アパート" },
+        { en: "apology", jp: "謝罪" },
+        { en: "app", jp: "アプリ" },
+        { en: "appearance", jp: "外見" },
+        { en: "apple", jp: "りんご" },
+        { en: "application", jp: "申込" },
+        { en: "appointment", jp: "予約" },
+        { en: "architect", jp: "建築家" },
+        { en: "architecture", jp: "建築" },
+        { en: "area", jp: "地域" },
+        { en: "argument", jp: "議論" },
+        { en: "arm", jp: "腕" },
+        { en: "armchair", jp: "肘掛け椅子" },
+        { en: "army", jp: "軍隊" },
+        { en: "arrival", jp: "到着" },
+        { en: "art", jp: "美術" },
+        { en: "article", jp: "記事" },
+        { en: "artist", jp: "芸術家" },
+        { en: "aspirin", jp: "アスピリン" },
+        { en: "assistant", jp: "アシスタント" },
+        { en: "astronaut", jp: "宇宙飛行士" },
+        { en: "athlete", jp: "選手" },
+        { en: "athletics", jp: "陸上競技" },
+        { en: "atmosphere", jp: "雰囲気" },
+        { en: "attack", jp: "攻撃" },
+        { en: "attention", jp: "注意" },
+        { en: "attitude", jp: "態度" },
+        { en: "audience", jp: "観客" },
+        { en: "aunt", jp: "おば" },
+        { en: "author", jp: "作家" },
+        { en: "autumn", jp: "秋" },
+        { en: "baby", jp: "赤ちゃん" },
+        { en: "babysitter", jp: "ベビーシッター" },
+        { en: "back", jp: "背中" },
+        { en: "background", jp: "背景" },
+        { en: "backpack", jp: "リュックサック" },
+        { en: "bag", jp: "かばん" },
+        { en: "baggage", jp: "荷物" },
+        { en: "baker", jp: "パン屋" },
+        { en: "balcony", jp: "バルコニー" },
+        { en: "ball", jp: "ボール" },
+        { en: "ballet", jp: "バレエ" },
+        { en: "balloon", jp: "風船" },
+        { en: "banana", jp: "バナナ" },
+        { en: "band", jp: "バンド" },
+        { en: "bandage", jp: "包帯" },
+        { en: "bank", jp: "銀行" },
+        { en: "bar", jp: "バー" },
+        { en: "barbecue", jp: "バーベキュー" },
+        { en: "barber", jp: "理髪師" },
+        { en: "baseball", jp: "野球" },
+        { en: "basin", jp: "洗面台" },
+        { en: "basket", jp: "かご" },
+        { en: "basketball", jp: "バスケットボール" },
+        { en: "bat", jp: "バット" },
+        { en: "bath", jp: "風呂" },
+        { en: "bathroom", jp: "浴室" },
+        { en: "battery", jp: "電池" },
+        { en: "battle", jp: "戦い" },
+        { en: "bay", jp: "湾" },
+        { en: "beach", jp: "浜辺" },
+        { en: "bean", jp: "豆" },
+        { en: "bear", jp: "クマ" },
+        { en: "beard", jp: "あごひげ" },
+        { en: "bed", jp: "ベッド" },
+        { en: "bedroom", jp: "寝室" },
+        { en: "bee", jp: "ハチ" },
+        { en: "beef", jp: "牛肉" },
+        { en: "beginner", jp: "初心者" },
+        { en: "beginning", jp: "始まり" },
+        { en: "behaviour", jp: "行動" },
+        { en: "bell", jp: "ベル" },
+        { en: "belt", jp: "ベルト" },
+        { en: "benefit", jp: "利益" },
+        { en: "bicycle", jp: "自転車" },
+        { en: "bill", jp: "請求書" },
+        { en: "bin", jp: "ゴミ箱" },
+        { en: "biology", jp: "生物学" },
+        { en: "bird", jp: "鳥" },
+        { en: "birth", jp: "誕生" },
+        { en: "birthday", jp: "誕生日" },
+        { en: "biscuit", jp: "ビスケット" },
+        { en: "blackboard", jp: "黒板" },
+        { en: "blanket", jp: "毛布" },
+        { en: "block", jp: "ブロック" },
+        { en: "blog", jp: "ブログ" },
+        { en: "blood", jp: "血" },
+        { en: "blouse", jp: "ブラウス" },
+        { en: "boat", jp: "ボート" },
+        { en: "body", jp: "体" },
+        { en: "bomb", jp: "爆弾" },
+        { en: "bone", jp: "骨" },
+        { en: "book", jp: "本" },
+        { en: "bookcase", jp: "本棚" },
+        { en: "boot", jp: "ブーツ" },
+        { en: "border", jp: "国境" },
+        { en: "boss", jp: "上司" },
+        { en: "bottle", jp: "びん" },
+        { en: "bottom", jp: "底" },
+        { en: "bowl", jp: "ボウル" },
+        { en: "box", jp: "箱" },
+        { en: "boy", jp: "少年" },
+        { en: "boyfriend", jp: "ボーイフレンド" },
+        { en: "bracelet", jp: "ブレスレット" },
+        { en: "brain", jp: "脳" },
+        { en: "brake", jp: "ブレーキ" },
+        { en: "branch", jp: "枝" },
+        { en: "bread", jp: "パン" },
+        { en: "break", jp: "休憩" },
+        { en: "breakfast", jp: "朝食" },
+        { en: "breath", jp: "息" },
+        { en: "bridge", jp: "橋" },
+        { en: "brochure", jp: "パンフレット" },
+        { en: "brother", jp: "兄弟" },
+        { en: "brush", jp: "ブラシ" },
+        { en: "bucket", jp: "バケツ" },
+        { en: "building", jp: "建物" },
+        { en: "bull", jp: "雄牛" },
+        { en: "bunch", jp: "束" },
+        { en: "burger", jp: "バーガー" },
+        { en: "business", jp: "ビジネス" },
+        { en: "butcher", jp: "肉屋" },
+        { en: "butter", jp: "バター" },
+        { en: "butterfly", jp: "蝶" },
+        { en: "button", jp: "ボタン" },
+        { en: "cab", jp: "タクシー" },
+        { en: "cabbage", jp: "キャベツ" },
+        { en: "cabin", jp: "小屋" },
+        { en: "cafe", jp: "カフェ" },
+        { en: "cage", jp: "檻" },
+        { en: "cake", jp: "ケーキ" },
+        { en: "calculator", jp: "計算機" },
+        { en: "calendar", jp: "カレンダー" },
+        { en: "calf", jp: "子牛" },
+        { en: "camel", jp: "ラクダ" },
+        { en: "camera", jp: "カメラ" },
+        { en: "camp", jp: "キャンプ" },
+        { en: "campsite", jp: "キャンプ場" },
+        { en: "candidate", jp: "候補者" },
+        { en: "candle", jp: "ろうそく" },
+        { en: "canteen", jp: "食堂" },
+        { en: "cap", jp: "帽子" },
+        { en: "capital", jp: "首都" },
+        { en: "captain", jp: "キャプテン" },
+        { en: "car", jp: "車" },
+        { en: "card", jp: "カード" },
+        { en: "career", jp: "キャリア" },
+        { en: "carpet", jp: "じゅうたん" },
+        { en: "carrot", jp: "にんじん" },
+        { en: "cartoon", jp: "漫画" },
+        { en: "case", jp: "ケース" },
+        { en: "cash", jp: "現金" },
+        { en: "castle", jp: "城" },
+        { en: "cat", jp: "猫" },
+        { en: "cathedral", jp: "大聖堂" },
+        { en: "cattle", jp: "牛" },
+        { en: "cave", jp: "洞窟" },
+        { en: "ceiling", jp: "天井" },
+        { en: "celebration", jp: "お祝い" },
+        { en: "celebrity", jp: "有名人" },
+        { en: "cent", jp: "セント" },
+        { en: "century", jp: "世紀" },
+        { en: "cereal", jp: "シリアル" },
+        { en: "ceremony", jp: "式典" },
+        { en: "certificate", jp: "証明書" },
+        { en: "chain", jp: "鎖" },
+        { en: "chair", jp: "椅子" },
+        { en: "challenge", jp: "挑戦" },
+        { en: "champion", jp: "チャンピオン" },
+        { en: "championship", jp: "選手権" },
+        { en: "chance", jp: "チャンス" },
+        { en: "channel", jp: "チャンネル" },
+        { en: "chapter", jp: "章" },
+        { en: "character", jp: "性格" },
+        { en: "charity", jp: "慈善団体" },
+        { en: "cheek", jp: "頬" },
+        { en: "cheese", jp: "チーズ" },
+        { en: "chef", jp: "シェフ" },
+        { en: "chemistry", jp: "化学" },
+        { en: "cheque", jp: "小切手" },
+        { en: "chess", jp: "チェス" },
+        { en: "chicken", jp: "鶏肉" },
+        { en: "childhood", jp: "子供時代" },
+        { en: "chin", jp: "あご" },
+        { en: "chocolate", jp: "チョコレート" },
+        { en: "choice", jp: "選択" },
+        { en: "cinema", jp: "映画館" },
+        { en: "circle", jp: "円" },
+        { en: "circus", jp: "サーカス" },
+        { en: "city", jp: "都市" },
+        { en: "class", jp: "クラス" },
+        { en: "classmate", jp: "クラスメート" },
+        { en: "classroom", jp: "教室" },
+        { en: "clinic", jp: "診療所" },
+        { en: "clock", jp: "時計" },
+        { en: "clothes", jp: "服" },
+        { en: "cloud", jp: "雲" },
+        { en: "clown", jp: "ピエロ" },
+        { en: "club", jp: "クラブ" },
+        { en: "coach", jp: "コーチ" },
+        { en: "coast", jp: "海岸" },
+        { en: "coat", jp: "コート" },
+        { en: "coffee", jp: "コーヒー" },
+        { en: "coin", jp: "硬貨" },
+        { en: "collar", jp: "襟" },
+        { en: "colleague", jp: "同僚" },
+        { en: "college", jp: "大学" },
+        { en: "colour", jp: "色" },
+        { en: "comedy", jp: "コメディー" },
+        { en: "comment", jp: "コメント" },
+        { en: "company", jp: "会社" },
+        { en: "competition", jp: "競争" },
+        { en: "complaint", jp: "苦情" },
+        { en: "computer", jp: "コンピューター" },
+        { en: "concert", jp: "コンサート" },
+        { en: "condition", jp: "状態" },
+        { en: "conference", jp: "会議" },
+        { en: "contest", jp: "コンテスト" },
+        { en: "continent", jp: "大陸" },
+        { en: "contract", jp: "契約" },
+        { en: "conversation", jp: "会話" },
+        { en: "cook", jp: "料理人" },
+        { en: "corner", jp: "角" },
+        { en: "cost", jp: "費用" },
+        { en: "costume", jp: "衣装" },
+        { en: "cottage", jp: "コテージ" },
+        { en: "cough", jp: "咳" },
+        { en: "country", jp: "国" },
+        { en: "countryside", jp: "田舎" },
+        { en: "couple", jp: "カップル" },
+        { en: "courage", jp: "勇気" },
+        { en: "course", jp: "コース" },
+        { en: "court", jp: "コート" },
+        { en: "cousin", jp: "いとこ" },
+        { en: "cow", jp: "牛" },
+        { en: "crash", jp: "衝突" },
+        { en: "creature", jp: "生き物" },
+        { en: "credit card", jp: "クレジットカード" },
+        { en: "crew", jp: "乗組員" },
+        { en: "cricket", jp: "クリケット" },
+        { en: "crime", jp: "犯罪" },
+        { en: "crop", jp: "作物" },
+        { en: "crossing", jp: "横断歩道" },
+        { en: "crossroads", jp: "交差点" },
+        { en: "crowd", jp: "群衆" },
+        { en: "cucumber", jp: "きゅうり" },
+        { en: "culture", jp: "文化" },
+        { en: "cup", jp: "カップ" },
+        { en: "cupboard", jp: "戸棚" },
+        { en: "currency", jp: "通貨" },
+        { en: "curry", jp: "カレー" },
+        { en: "curtain", jp: "カーテン" },
+        { en: "cushion", jp: "クッション" },
+        { en: "custom", jp: "習慣" },
+        { en: "customer", jp: "客" },
+        { en: "customs", jp: "税関" },
+        { en: "dad", jp: "お父さん" },
+        { en: "damage", jp: "損害" },
+        { en: "dance", jp: "ダンス" },
+        { en: "dancer", jp: "ダンサー" },
+        { en: "danger", jp: "危険" },
+        { en: "data", jp: "データ" },
+        { en: "date", jp: "日付" },
+        { en: "daughter", jp: "娘" },
+        { en: "day", jp: "日" },
+        { en: "death", jp: "死" },
+        { en: "decision", jp: "決定" },
+        { en: "degree", jp: "度" },
+        { en: "delay", jp: "遅延" },
+        { en: "delivery", jp: "配達" },
+        { en: "dentist", jp: "歯医者" },
+        { en: "department", jp: "部門" },
+        { en: "departure", jp: "出発" },
+        { en: "description", jp: "説明" },
+        { en: "desert", jp: "砂漠" },
+        { en: "design", jp: "デザイン" },
+        { en: "designer", jp: "デザイナー" },
+        { en: "desk", jp: "机" },
+        { en: "dessert", jp: "デザート" },
+        { en: "destination", jp: "目的地" },
+        { en: "detail", jp: "詳細" },
+        { en: "detective", jp: "探偵" },
+        { en: "development", jp: "発展" },
+        { en: "diary", jp: "日記" },
+        { en: "dictionary", jp: "辞書" },
+        { en: "diet", jp: "食事" },
+        { en: "difference", jp: "違い" },
+        { en: "difficulty", jp: "難しさ" },
+        { en: "dinner", jp: "夕食" },
+        { en: "dinosaur", jp: "恐竜" },
+        { en: "direction", jp: "方向" },
+        { en: "director", jp: "監督" },
+        { en: "disagreement", jp: "意見の相違" },
+        { en: "discount", jp: "割引" },
+        { en: "discovery", jp: "発見" },
+        { en: "discussion", jp: "議論" },
+        { en: "disease", jp: "病気" },
+        { en: "dish", jp: "皿" },
+        { en: "dishwasher", jp: "食洗機" },
+        { en: "distance", jp: "距離" },
+        { en: "district", jp: "地区" },
+        { en: "diver", jp: "ダイバー" },
+        { en: "doctor", jp: "医者" },
+        { en: "document", jp: "書類" },
+        { en: "dog", jp: "犬" },
+        { en: "doll", jp: "人形" },
+        { en: "dollar", jp: "ドル" },
+        { en: "dolphin", jp: "イルカ" },
+        { en: "donkey", jp: "ロバ" },
+        { en: "door", jp: "ドア" },
+        { en: "drama", jp: "ドラマ" },
+        { en: "drawer", jp: "引き出し" },
+        { en: "drawing", jp: "絵" },
+        { en: "dream", jp: "夢" },
+        { en: "dress", jp: "ドレス" },
+        { en: "drink", jp: "飲み物" },
+        { en: "driver", jp: "運転手" },
+        { en: "drum", jp: "ドラム" },
+        { en: "duck", jp: "アヒル" },
+        { en: "dust", jp: "ほこり" },
+        { en: "duty", jp: "義務" },
+        { en: "ear", jp: "耳" },
+        { en: "earring", jp: "イヤリング" },
+        { en: "earth", jp: "地球" },
+        { en: "edge", jp: "端" },
+        { en: "education", jp: "教育" },
+        { en: "effect", jp: "効果" },
+        { en: "effort", jp: "努力" },
+        { en: "egg", jp: "卵" },
+        { en: "elbow", jp: "ひじ" },
+        { en: "election", jp: "選挙" },
+        { en: "electricity", jp: "電気" },
+        { en: "elephant", jp: "象" },
+        { en: "email", jp: "メール" },
+        { en: "embassy", jp: "大使館" },
+        { en: "emergency", jp: "緊急事態" },
+        { en: "employee", jp: "従業員" },
+        { en: "energy", jp: "エネルギー" },
+        { en: "engine", jp: "エンジン" },
+        { en: "engineer", jp: "エンジニア" },
+        { en: "entertainment", jp: "娯楽" },
+        { en: "entrance", jp: "入り口" },
+        { en: "envelope", jp: "封筒" },
+        { en: "environment", jp: "環境" },
+        { en: "equipment", jp: "機材" },
+        { en: "eraser", jp: "消しゴム" },
+        { en: "essay", jp: "エッセイ" },
+        { en: "euro", jp: "ユーロ" },
+        { en: "evening", jp: "夕方" },
+        { en: "event", jp: "出来事" },
+        { en: "examination", jp: "試験" },
+        { en: "example", jp: "例" },
+        { en: "exercise", jp: "運動" },
+        { en: "exhibition", jp: "展示会" },
+        { en: "exit", jp: "出口" },
+        { en: "experience", jp: "経験" },
+        { en: "experiment", jp: "実験" },
+        { en: "expert", jp: "専門家" },
+        { en: "eye", jp: "目" },
+        { en: "face", jp: "顔" },
+        { en: "fact", jp: "事実" },
+        { en: "factory", jp: "工場" },
+        { en: "family", jp: "家族" },
+        { en: "fan", jp: "ファン" },
+        { en: "farm", jp: "農場" },
+        { en: "farmer", jp: "農家" },
+        { en: "fashion", jp: "ファッション" },
+        { en: "fear", jp: "恐怖" },
+        { en: "feeling", jp: "感情" },
+        { en: "ferry", jp: "フェリー" },
+        { en: "festival", jp: "祭り" },
+        { en: "fever", jp: "熱" },
+        { en: "field", jp: "畑" },
+        { en: "fight", jp: "喧嘩" },
+        { en: "figure", jp: "数字" },
+        { en: "file", jp: "ファイル" },
+        { en: "film", jp: "映画" },
+        { en: "finger", jp: "指" },
+        { en: "fire", jp: "火" },
+        { en: "firework", jp: "花火" },
+        { en: "fish", jp: "魚" },
+        { en: "fitness", jp: "フィットネス" },
+        { en: "flag", jp: "旗" },
+        { en: "flat", jp: "アパート" },
+        { en: "flight", jp: "フライト" },
+        { en: "flood", jp: "洪水" },
+        { en: "floor", jp: "床" },
+        { en: "flour", jp: "小麦粉" },
+        { en: "flower", jp: "花" },
+        { en: "flu", jp: "インフルエンザ" },
+        { en: "flute", jp: "フルート" },
+        { en: "fog", jp: "霧" },
+        { en: "food", jp: "食べ物" },
+        { en: "foot", jp: "足" },
+        { en: "football", jp: "サッカー" },
+        { en: "forecast", jp: "予報" },
+        { en: "forest", jp: "森" },
+        { en: "form", jp: "用紙" },
+        { en: "fountain", jp: "噴水" },
+        { en: "friend", jp: "友達" },
+        { en: "friendship", jp: "友情" },
+        { en: "frog", jp: "カエル" },
+        { en: "fruit", jp: "果物" },
+        { en: "fuel", jp: "燃料" },
+        { en: "furniture", jp: "家具" },
+        { en: "future", jp: "未来" },
+        { en: "gallery", jp: "ギャラリー" },
+        { en: "game", jp: "ゲーム" },
+        { en: "garage", jp: "ガレージ" },
+        { en: "garden", jp: "庭" },
+        { en: "garlic", jp: "にんにく" },
+        { en: "gate", jp: "門" },
+        { en: "generation", jp: "世代" },
+        { en: "geography", jp: "地理" },
+        { en: "gift", jp: "贈り物" },
+        { en: "giraffe", jp: "キリン" },
+        { en: "girl", jp: "少女" },
+        { en: "girlfriend", jp: "ガールフレンド" },
+        { en: "glass", jp: "グラス" },
+        { en: "glasses", jp: "眼鏡" },
+        { en: "glove", jp: "手袋" },
+        { en: "goal", jp: "ゴール" },
+        { en: "goat", jp: "ヤギ" },
+        { en: "gold", jp: "金" },
+        { en: "golf", jp: "ゴルフ" },
+        { en: "government", jp: "政府" },
+        { en: "grade", jp: "成績" },
+        { en: "grammar", jp: "文法" },
+        { en: "grandfather", jp: "祖父" },
+        { en: "grandmother", jp: "祖母" },
+        { en: "grape", jp: "ぶどう" },
+        { en: "grass", jp: "草" },
+        { en: "ground", jp: "地面" },
+        { en: "group", jp: "グループ" },
+        { en: "guest", jp: "ゲスト" },
+        { en: "guide", jp: "ガイド" },
+        { en: "guitar", jp: "ギター" },
+        { en: "gym", jp: "ジム" },
+        { en: "habit", jp: "習慣" },
+        { en: "hair", jp: "髪" },
+        { en: "hairdresser", jp: "美容師" },
+        { en: "half", jp: "半分" },
+        { en: "hall", jp: "ホール" },
+        { en: "hand", jp: "手" },
+        { en: "handbag", jp: "ハンドバッグ" },
+        { en: "harbour", jp: "港" },
+        { en: "hat", jp: "帽子" },
+        { en: "headache", jp: "頭痛" },
+        { en: "health", jp: "健康" },
+        { en: "heart", jp: "心臓" },
+        { en: "heat", jp: "熱" },
+        { en: "height", jp: "高さ" },
+        { en: "helicopter", jp: "ヘリコプター" },
+        { en: "helmet", jp: "ヘルメット" },
+        { en: "hero", jp: "英雄" },
+        { en: "hill", jp: "丘" },
+        { en: "history", jp: "歴史" },
+        { en: "hobby", jp: "趣味" },
+        { en: "hockey", jp: "ホッケー" },
+        { en: "hole", jp: "穴" },
+        { en: "holiday", jp: "休日" },
+        { en: "homework", jp: "宿題" },
+        { en: "honey", jp: "はちみつ" },
+        { en: "hope", jp: "希望" },
+        { en: "horse", jp: "馬" },
+        { en: "hospital", jp: "病院" },
+        { en: "hotel", jp: "ホテル" },
+        { en: "hour", jp: "時間" },
+        { en: "house", jp: "家" },
+        { en: "housework", jp: "家事" },
+        { en: "human", jp: "人間" },
+        { en: "ice", jp: "氷" },
+        { en: "ice cream", jp: "アイスクリーム" },
+        { en: "idea", jp: "アイデア" },
+        { en: "illness", jp: "病気" },
+        { en: "imagination", jp: "想像力" },
+        { en: "importance", jp: "重要性" },
+        { en: "industry", jp: "産業" },
+        { en: "information", jp: "情報" },
+        { en: "ingredient", jp: "材料" },
+        { en: "injury", jp: "怪我" },
+        { en: "insect", jp: "昆虫" },
+        { en: "instrument", jp: "楽器" },
+        { en: "interest", jp: "興味" },
+        { en: "interview", jp: "面接" },
+        { en: "invention", jp: "発明" },
+        { en: "invitation", jp: "招待" },
+        { en: "island", jp: "島" },
+        { en: "jacket", jp: "ジャケット" },
+        { en: "jam", jp: "ジャム" },
+        { en: "jeans", jp: "ジーンズ" },
+        { en: "jewellery", jp: "宝石類" },
+        { en: "job", jp: "仕事" },
+        { en: "journalist", jp: "ジャーナリスト" },
+        { en: "journey", jp: "旅" },
+        { en: "judge", jp: "裁判官" },
+        { en: "juice", jp: "ジュース" },
+        { en: "jungle", jp: "ジャングル" },
+        { en: "kangaroo", jp: "カンガルー" },
+        { en: "kettle", jp: "やかん" },
+        { en: "key", jp: "鍵" },
+        { en: "keyboard", jp: "キーボード" },
+        { en: "kid", jp: "子供" },
+        { en: "kindness", jp: "親切" },
+        { en: "king", jp: "王" },
+        { en: "kitchen", jp: "台所" },
+        { en: "kite", jp: "凧" },
+        { en: "kitten", jp: "子猫" },
+        { en: "knee", jp: "膝" },
+        { en: "knife", jp: "ナイフ" },
+        { en: "knowledge", jp: "知識" },
+        { en: "lack", jp: "不足" },
+        { en: "ladder", jp: "はしご" },
+        { en: "lake", jp: "湖" },
+        { en: "lamb", jp: "子羊" },
+        { en: "lamp", jp: "ランプ" },
+        { en: "landscape", jp: "風景" },
+        { en: "language", jp: "言語" },
+        { en: "laptop", jp: "ノートパソコン" },
+        { en: "law", jp: "法律" },
+        { en: "lawyer", jp: "弁護士" },
+        { en: "leaf", jp: "葉" },
+        { en: "lecture", jp: "講義" },
+        { en: "leg", jp: "足" },
+        { en: "lemon", jp: "レモン" },
+        { en: "lesson", jp: "授業" },
+        { en: "letter", jp: "手紙" },
+        { en: "lettuce", jp: "レタス" },
+        { en: "library", jp: "図書館" },
+        { en: "licence", jp: "免許" },
+        { en: "life", jp: "人生" },
+        { en: "light", jp: "光" },
+        { en: "lightning", jp: "稲妻" },
+        { en: "line", jp: "線" },
+        { en: "lion", jp: "ライオン" },
+        { en: "liquid", jp: "液体" },
+        { en: "list", jp: "リスト" },
+        { en: "literature", jp: "文学" },
+        { en: "living room", jp: "居間" },
+        { en: "lock", jp: "錠" },
+        { en: "love", jp: "愛" },
+        { en: "luck", jp: "運" },
+        { en: "luggage", jp: "荷物" },
+        { en: "lunch", jp: "昼食" },
+        { en: "machine", jp: "機械" },
+        { en: "magazine", jp: "雑誌" },
+        { en: "man", jp: "男性" },
+        { en: "manager", jp: "マネージャー" },
+        { en: "map", jp: "地図" },
+        { en: "market", jp: "市場" },
+        { en: "marriage", jp: "結婚" },
+        { en: "material", jp: "材料" },
+        { en: "meal", jp: "食事" },
+        { en: "meat", jp: "肉" },
+        { en: "mechanic", jp: "整備士" },
+        { en: "medicine", jp: "薬" },
+        { en: "meeting", jp: "会議" },
+        { en: "member", jp: "メンバー" },
+        { en: "memory", jp: "記憶" },
+        { en: "message", jp: "メッセージ" },
+        { en: "milk", jp: "牛乳" },
+        { en: "mind", jp: "心" },
+        { en: "minute", jp: "分" },
+        { en: "mirror", jp: "鏡" },
+        { en: "mistake", jp: "間違い" },
+        { en: "mobile phone", jp: "携帯電話" },
+        { en: "model", jp: "モデル" },
+        { en: "moment", jp: "瞬間" },
+        { en: "money", jp: "お金" },
+        { en: "monkey", jp: "サル" },
+        { en: "month", jp: "月" },
+        { en: "moon", jp: "月" },
+        { en: "morning", jp: "朝" },
+        { en: "mother", jp: "母" },
+        { en: "motorbike", jp: "オートバイ" },
+        { en: "mountain", jp: "山" },
+        { en: "mouse", jp: "ネズミ" },
+        { en: "mouth", jp: "口" },
+        { en: "movie", jp: "映画" },
+        { en: "museum", jp: "博物館" },
+        { en: "mushroom", jp: "キノコ" },
+        { en: "music", jp: "音楽" },
+        { en: "musician", jp: "音楽家" },
+        { en: "name", jp: "名前" },
+        { en: "nationality", jp: "国籍" },
+        { en: "nature", jp: "自然" },
+        { en: "neck", jp: "首" },
+        { en: "necklace", jp: "ネックレス" },
+        { en: "neighbour", jp: "近所の人" },
+        { en: "nephew", jp: "甥" },
+        { en: "news", jp: "ニュース" },
+        { en: "newspaper", jp: "新聞" },
+        { en: "niece", jp: "姪" },
+        { en: "night", jp: "夜" },
+        { en: "noise", jp: "音" },
+        { en: "north", jp: "北" },
+        { en: "nose", jp: "鼻" },
+        { en: "note", jp: "メモ" },
+        { en: "novel", jp: "小説" },
+        { en: "number", jp: "数" },
+        { en: "nurse", jp: "看護師" },
+        { en: "ocean", jp: "海洋" },
+        { en: "office", jp: "オフィス" },
+        { en: "oil", jp: "油" },
+        { en: "onion", jp: "玉ねぎ" },
+        { en: "opinion", jp: "意見" },
+        { en: "opportunity", jp: "機会" },
+        { en: "orange", jp: "オレンジ" },
+        { en: "orchestra", jp: "オーケストラ" },
+        { en: "order", jp: "注文" },
+        { en: "oven", jp: "オーブン" },
+        { en: "owner", jp: "所有者" },
+        { en: "page", jp: "ページ" },
+        { en: "pain", jp: "痛み" },
+        { en: "paint", jp: "ペンキ" },
+        { en: "painter", jp: "画家" },
+        { en: "painting", jp: "絵画" },
+        { en: "pair", jp: "ペア" },
+        { en: "palace", jp: "宮殿" },
+        { en: "pan", jp: "鍋" },
+        { en: "paper", jp: "紙" },
+        { en: "parent", jp: "親" },
+        { en: "park", jp: "公園" },
+        { en: "parrot", jp: "オウム" },
+        { en: "part", jp: "部分" },
+        { en: "partner", jp: "パートナー" },
+        { en: "party", jp: "パーティー" },
+        { en: "passenger", jp: "乗客" },
+        { en: "passport", jp: "パスポート" },
+        { en: "password", jp: "パスワード" },
+        { en: "past", jp: "過去" },
+        { en: "path", jp: "小道" },
+        { en: "patient", jp: "患者" },
+        { en: "pavement", jp: "歩道" },
+        { en: "pea", jp: "エンドウ豆" },
+        { en: "peace", jp: "平和" },
+        { en: "peach", jp: "桃" },
+        { en: "pear", jp: "梨" },
+        { en: "pedestrian", jp: "歩行者" },
+        { en: "pen", jp: "ペン" },
+        { en: "pencil", jp: "鉛筆" },
+        { en: "penguin", jp: "ペンギン" },
+        { en: "people", jp: "人々" },
+        { en: "pepper", jp: "こしょう" },
+        { en: "performance", jp: "パフォーマンス" },
+        { en: "perfume", jp: "香水" },
+        { en: "period", jp: "期間" },
+        { en: "permission", jp: "許可" },
+        { en: "person", jp: "人" },
+        { en: "personality", jp: "個性" },
+        { en: "pet", jp: "ペット" },
+        { en: "petrol", jp: "ガソリン" },
+        { en: "pharmacy", jp: "薬局" },
+        { en: "phone", jp: "電話" },
+        { en: "photo", jp: "写真" },
+        { en: "photographer", jp: "写真家" },
+        { en: "physics", jp: "物理学" },
+        { en: "piano", jp: "ピアノ" },
+        { en: "picnic", jp: "ピクニック" },
+        { en: "picture", jp: "絵" },
+        { en: "piece", jp: "一片" },
+        { en: "pig", jp: "豚" },
+        { en: "pill", jp: "錠剤" },
+        { en: "pillow", jp: "枕" },
+        { en: "pilot", jp: "パイロット" },
+        { en: "pineapple", jp: "パイナップル" },
+        { en: "pizza", jp: "ピザ" },
+        { en: "place", jp: "場所" },
+        { en: "plan", jp: "計画" },
+        { en: "plane", jp: "飛行機" },
+        { en: "planet", jp: "惑星" },
+        { en: "plant", jp: "植物" },
+        { en: "plate", jp: "皿" },
+        { en: "platform", jp: "プラットフォーム" },
+        { en: "play", jp: "劇" },
+        { en: "player", jp: "プレイヤー" },
+        { en: "playground", jp: "遊び場" },
+        { en: "pocket", jp: "ポケット" },
+        { en: "poem", jp: "詩" },
+        { en: "point", jp: "点" },
+        { en: "police", jp: "警察" },
+        { en: "police officer", jp: "警察官" },
+        { en: "politician", jp: "政治家" },
+        { en: "pollution", jp: "汚染" },
+        { en: "pool", jp: "プール" },
+        { en: "population", jp: "人口" },
+        { en: "port", jp: "港" },
+        { en: "possibility", jp: "可能性" },
+        { en: "post office", jp: "郵便局" },
+        { en: "postcard", jp: "葉書" },
+        { en: "poster", jp: "ポスター" },
+        { en: "pot", jp: "鍋" },
+        { en: "potato", jp: "じゃがいも" },
+        { en: "pound", jp: "ポンド" },
+        { en: "power", jp: "力" },
+        { en: "practice", jp: "練習" },
+        { en: "prescription", jp: "処方箋" },
+        { en: "present", jp: "プレゼント" },
+        { en: "president", jp: "大統領" },
+        { en: "price", jp: "値段" },
+        { en: "prince", jp: "王子" },
+        { en: "princess", jp: "王女" },
+        { en: "printer", jp: "プリンター" },
+        { en: "prison", jp: "刑務所" },
+        { en: "prize", jp: "賞" },
+        { en: "problem", jp: "問題" },
+        { en: "product", jp: "製品" },
+        { en: "profession", jp: "職業" },
+        { en: "professor", jp: "教授" },
+        { en: "programme", jp: "番組" },
+        { en: "progress", jp: "進歩" },
+        { en: "project", jp: "プロジェクト" },
+        { en: "promise", jp: "約束" },
+        { en: "public transport", jp: "公共交通機関" },
+        { en: "pupil", jp: "生徒" },
+        { en: "puppy", jp: "子犬" },
+        { en: "purpose", jp: "目的" },
+        { en: "purse", jp: "財布" },
+        { en: "puzzle", jp: "パズル" },
+        { en: "qualification", jp: "資格" },
+        { en: "quality", jp: "品質" },
+        { en: "quantity", jp: "量" },
+        { en: "queen", jp: "女王" },
+        { en: "question", jp: "質問" },
+        { en: "queue", jp: "列" },
+        { en: "quiz", jp: "クイズ" },
+        { en: "rabbit", jp: "うさぎ" },
+        { en: "race", jp: "レース" },
+        { en: "racket", jp: "ラケット" },
+        { en: "radio", jp: "ラジオ" },
+        { en: "railway", jp: "鉄道" },
+        { en: "rain", jp: "雨" },
+        { en: "reason", jp: "理由" },
+        { en: "receipt", jp: "レシート" },
+        { en: "reception", jp: "受付" },
+        { en: "recipe", jp: "レシピ" },
+        { en: "refrigerator", jp: "冷蔵庫" },
+        { en: "region", jp: "地域" },
+        { en: "relationship", jp: "関係" },
+        { en: "relative", jp: "親戚" },
+        { en: "religion", jp: "宗教" },
+        { en: "rent", jp: "家賃" },
+        { en: "reply", jp: "返事" },
+        { en: "report", jp: "報告" },
+        { en: "reporter", jp: "記者" },
+        { en: "research", jp: "研究" },
+        { en: "reservation", jp: "予約" },
+        { en: "resort", jp: "リゾート" },
+        { en: "respect", jp: "尊敬" },
+        { en: "restaurant", jp: "レストラン" },
+        { en: "result", jp: "結果" },
+        { en: "rice", jp: "米" },
+        { en: "river", jp: "川" },
+        { en: "road", jp: "道" },
+        { en: "robot", jp: "ロボット" },
+        { en: "rock", jp: "岩" },
+        { en: "roof", jp: "屋根" },
+        { en: "room", jp: "部屋" },
+        { en: "rope", jp: "ロープ" },
+        { en: "rose", jp: "バラ" },
+        { en: "route", jp: "ルート" },
+        { en: "rubbish", jp: "ゴミ" },
+        { en: "rugby", jp: "ラグビー" },
+        { en: "rule", jp: "規則" },
+        { en: "ruler", jp: "定規" },
+        { en: "sailing", jp: "セーリング" },
+        { en: "salad", jp: "サラダ" },
+        { en: "salary", jp: "給料" },
+        { en: "salt", jp: "塩" },
+        { en: "sand", jp: "砂" },
+        { en: "sandwich", jp: "サンドイッチ" },
+        { en: "sauce", jp: "ソース" },
+        { en: "scarf", jp: "マフラー" },
+        { en: "scene", jp: "場面" },
+        { en: "school", jp: "学校" },
+        { en: "science", jp: "科学" },
+        { en: "scientist", jp: "科学者" },
+        { en: "scissors", jp: "はさみ" },
+        { en: "score", jp: "得点" },
+        { en: "screen", jp: "画面" },
+        { en: "sea", jp: "海" },
+        { en: "season", jp: "季節" },
+        { en: "seat", jp: "座席" },
+        { en: "secret", jp: "秘密" },
+        { en: "secretary", jp: "秘書" },
+        { en: "sense", jp: "感覚" },
+        { en: "sentence", jp: "文" },
+        { en: "series", jp: "シリーズ" },
+        { en: "service", jp: "サービス" },
+        { en: "shadow", jp: "影" },
+        { en: "shape", jp: "形" },
+        { en: "shark", jp: "サメ" },
+        { en: "sheep", jp: "羊" },
+        { en: "sheet", jp: "シーツ" },
+        { en: "shelf", jp: "棚" },
+        { en: "shirt", jp: "シャツ" },
+        { en: "shock", jp: "ショック" },
+        { en: "shoe", jp: "靴" },
+        { en: "shop", jp: "店" },
+        { en: "shopping", jp: "買い物" },
+        { en: "shoulder", jp: "肩" },
+        { en: "shower", jp: "シャワー" },
+        { en: "sight", jp: "視力" },
+        { en: "sign", jp: "標識" },
+        { en: "signature", jp: "署名" },
+        { en: "silence", jp: "静けさ" },
+        { en: "silver", jp: "銀" },
+        { en: "singer", jp: "歌手" },
+        { en: "sister", jp: "姉妹" },
+        { en: "situation", jp: "状況" },
+        { en: "size", jp: "サイズ" },
+        { en: "skill", jp: "技術" },
+        { en: "skin", jp: "肌" },
+        { en: "skirt", jp: "スカート" },
+        { en: "sky", jp: "空" },
+        { en: "sleep", jp: "睡眠" },
+        { en: "smell", jp: "匂い" },
+        { en: "smile", jp: "笑顔" },
+        { en: "smoke", jp: "煙" },
+        { en: "snake", jp: "ヘビ" },
+        { en: "snow", jp: "雪" },
+        { en: "soap", jp: "石けん" },
+        { en: "society", jp: "社会" },
+        { en: "sock", jp: "靴下" },
+        { en: "software", jp: "ソフトウェア" },
+        { en: "soldier", jp: "兵士" },
+        { en: "solution", jp: "解決策" },
+        { en: "son", jp: "息子" },
+        { en: "song", jp: "歌" },
+        { en: "soul", jp: "魂" },
+        { en: "sound", jp: "音" },
+        { en: "soup", jp: "スープ" },
+        { en: "south", jp: "南" },
+        { en: "space", jp: "宇宙" },
+        { en: "speech", jp: "スピーチ" },
+        { en: "speed", jp: "スピード" },
+        { en: "spider", jp: "クモ" },
+        { en: "sport", jp: "スポーツ" },
+        { en: "spring", jp: "春" },
+        { en: "square", jp: "広場" },
+        { en: "stadium", jp: "スタジアム" },
+        { en: "staff", jp: "スタッフ" },
+        { en: "stage", jp: "舞台" },
+        { en: "stairs", jp: "階段" },
+        { en: "stamp", jp: "切手" },
+        { en: "star", jp: "星" },
+        { en: "station", jp: "駅" },
+        { en: "statue", jp: "像" },
+        { en: "steak", jp: "ステーキ" },
+        { en: "stomach", jp: "胃" },
+        { en: "stone", jp: "石" },
+        { en: "storm", jp: "嵐" },
+        { en: "story", jp: "物語" },
+        { en: "stranger", jp: "見知らぬ人" },
+        { en: "strawberry", jp: "いちご" },
+        { en: "stream", jp: "小川" },
+        { en: "street", jp: "通り" },
+        { en: "stress", jp: "ストレス" },
+        { en: "student", jp: "学生" },
+        { en: "style", jp: "スタイル" },
+        { en: "subject", jp: "科目" },
+        { en: "success", jp: "成功" },
+        { en: "suit", jp: "スーツ" },
+        { en: "suitcase", jp: "スーツケース" },
+        { en: "summer", jp: "夏" },
+        { en: "sun", jp: "太陽" },
+        { en: "sunglasses", jp: "サングラス" },
+        { en: "supermarket", jp: "スーパーマーケット" },
+        { en: "surprise", jp: "驚き" },
+        { en: "sweater", jp: "セーター" },
+        { en: "swimming pool", jp: "プール" },
+        { en: "table", jp: "テーブル" },
+        { en: "talent", jp: "才能" },
+        { en: "tax", jp: "税金" },
+        { en: "taxi", jp: "タクシー" },
+        { en: "tea", jp: "お茶" },
+        { en: "teacher", jp: "先生" },
+        { en: "team", jp: "チーム" },
+        { en: "teenager", jp: "十代の若者" },
+        { en: "television", jp: "テレビ" },
+        { en: "temperature", jp: "気温" },
+        { en: "tennis", jp: "テニス" },
+        { en: "tent", jp: "テント" },
+        { en: "test", jp: "テスト" },
+        { en: "textbook", jp: "教科書" },
+        { en: "theatre", jp: "劇場" },
+        { en: "thief", jp: "泥棒" },
+        { en: "throat", jp: "のど" },
+        { en: "ticket", jp: "切符" },
+        { en: "tie", jp: "ネクタイ" },
+        { en: "tiger", jp: "トラ" },
+        { en: "time", jp: "時間" },
+        { en: "tomato", jp: "トマト" },
+        { en: "tongue", jp: "舌" },
+        { en: "tooth", jp: "歯" },
+        { en: "toothbrush", jp: "歯ブラシ" },
+        { en: "topic", jp: "話題" },
+        { en: "tour", jp: "ツアー" },
+        { en: "tourist", jp: "観光客" },
+        { en: "towel", jp: "タオル" },
+        { en: "tower", jp: "塔" },
+        { en: "town", jp: "町" },
+        { en: "toy", jp: "おもちゃ" },
+        { en: "traffic", jp: "交通" },
+        { en: "traffic jam", jp: "渋滞" },
+        { en: "train", jp: "電車" },
+        { en: "trainer", jp: "トレーナー" },
+        { en: "tree", jp: "木" },
+        { en: "trip", jp: "旅行" },
+        { en: "trousers", jp: "ズボン" },
+        { en: "truck", jp: "トラック" },
+        { en: "trumpet", jp: "トランペット" },
+        { en: "T-shirt", jp: "Tシャツ" },
+        { en: "tunnel", jp: "トンネル" },
+        { en: "umbrella", jp: "傘" },
+        { en: "uncle", jp: "おじ" },
+        { en: "uniform", jp: "制服" },
+        { en: "universe", jp: "宇宙" },
+        { en: "university", jp: "大学" },
+        { en: "vegetable", jp: "野菜" },
+        { en: "vehicle", jp: "乗り物" },
+        { en: "video", jp: "ビデオ" },
+        { en: "view", jp: "眺め" },
+        { en: "village", jp: "村" },
+        { en: "violin", jp: "バイオリン" },
+        { en: "visa", jp: "ビザ" },
+        { en: "visit", jp: "訪問" },
+        { en: "visitor", jp: "訪問者" },
+        { en: "vocabulary", jp: "語彙" },
+        { en: "voice", jp: "声" },
+        { en: "volunteer", jp: "ボランティア" },
+        { en: "wage", jp: "賃金" },
+        { en: "waiter", jp: "ウェイター" },
+        { en: "wall", jp: "壁" },
+        { en: "wallet", jp: "財布" },
+        { en: "war", jp: "戦争" },
+        { en: "wardrobe", jp: "クローゼット" },
+        { en: "watch", jp: "腕時計" },
+        { en: "water", jp: "水" },
+        { en: "waterfall", jp: "滝" },
+        { en: "wave", jp: "波" },
+        { en: "weather", jp: "天気" },
+        { en: "website", jp: "ウェブサイト" },
+        { en: "wedding", jp: "結婚式" },
+        { en: "week", jp: "週" },
+        { en: "weekend", jp: "週末" },
+        { en: "weight", jp: "体重" },
+        { en: "whale", jp: "クジラ" },
+        { en: "wheel", jp: "車輪" },
+        { en: "wife", jp: "妻" },
+        { en: "wind", jp: "風" },
+        { en: "window", jp: "窓" },
+        { en: "wing", jp: "翼" },
+        { en: "winter", jp: "冬" },
+        { en: "wolf", jp: "オオカミ" },
+        { en: "woman", jp: "女性" },
+        { en: "wood", jp: "木材" },
+        { en: "word", jp: "単語" },
+        { en: "work", jp: "仕事" },
+        { en: "worker", jp: "労働者" },
+        { en: "world", jp: "世界" },
+        { en: "writer", jp: "作家" },
+        { en: "year", jp: "年" },
+        { en: "zoo", jp: "動物園" },
+      ];
+
+      let QUESTIONS_PER_GAME = 20; // now variable, set by start-screen buttons
+
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let wrongAnswers = [];
+
+      const startWrapper = document.getElementById("startWrapper");
+      const gameWrapper = document.getElementById("gameWrapper");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const questionJpEl = document.getElementById("questionJp");
+      const answersEl = document.getElementById("answers");
+      const progressEl = document.getElementById("progress");
+      const scoreEl = document.getElementById("score");
+      const scoreSubEl = document.getElementById("scoreSub");
+      const mistakesTitleEl = document.getElementById("mistakesTitle");
+      const mistakesListEl = document.getElementById("mistakesList");
+      const playAgainBtn = document.getElementById("playAgainBtn");
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function startGame() {
+        questions = shuffle(VERB_BANK).slice(0, QUESTIONS_PER_GAME);
+        currentIndex = 0;
+        score = 0;
+        wrongAnswers = [];
+        startWrapper.style.display = "none";
+        resultsWrapper.style.display = "none";
+        gameWrapper.style.display = "flex";
+        progressEl.style.display = "block";
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const q = questions[currentIndex];
+        progressEl.textContent =
+          "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
+        questionJpEl.textContent = q.en;
+
+        const distractorPool = VERB_BANK.filter((v) => v.en !== q.en);
+        const distractors = shuffle(distractorPool).slice(0, 2);
+        const options = shuffle([q, ...distractors]);
+
+        answersEl.innerHTML = "";
+        options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.textContent = opt.jp;
+          btn.addEventListener("click", () => handleAnswer(opt, q, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(selected, correctQ, clickedBtn) {
+        const allBtns = answersEl.querySelectorAll(".btn");
+        allBtns.forEach((b) => (b.disabled = true));
+
+        const isCorrect = selected.en === correctQ.en;
+
+        allBtns.forEach((b) => {
+          if (b.textContent === correctQ.jp) {
+            b.classList.add("correct");
+          } else if (b === clickedBtn) {
+            b.classList.add("wrong");
+          } else {
+            b.classList.add("dim");
+          }
+        });
+
+        if (isCorrect) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            jp: correctQ.jp,
+            correct: correctQ.en,
+            chosen: selected.en,
+          });
+        }
+
+        setTimeout(() => {
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        }, 900);
+      }
+
+      function showResults() {
+        gameWrapper.style.display = "none";
+        progressEl.style.display = "none";
+        resultsWrapper.style.display = "flex";
+
+        scoreEl.textContent = score + " / " + QUESTIONS_PER_GAME;
+        if (score === QUESTIONS_PER_GAME) {
+          scoreSubEl.textContent = "Perfect score! 🎉";
+        } else if (score >= QUESTIONS_PER_GAME * 0.7) {
+          scoreSubEl.textContent = "Great job!";
+        } else {
+          scoreSubEl.textContent = "Keep practising!";
+        }
+
+        mistakesListEl.innerHTML = "";
+        if (wrongAnswers.length > 0) {
+          mistakesTitleEl.style.display = "block";
+          wrongAnswers.forEach((w) => {
+            const li = document.createElement("li");
+            const jpSpan = document.createElement("span");
+            jpSpan.className = "jp";
+            jpSpan.textContent = w.jp;
+            const enSpan = document.createElement("span");
+            enSpan.className = "en";
+            enSpan.textContent = w.correct;
+            li.appendChild(jpSpan);
+            li.appendChild(enSpan);
+            mistakesListEl.appendChild(li);
+          });
+        } else {
+          mistakesTitleEl.style.display = "none";
+        }
+      }
+
+      // start-screen buttons pick the question count and begin the game
+      document.querySelectorAll(".start-buttons .btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          QUESTIONS_PER_GAME = parseInt(btn.dataset.count, 10);
+          startGame();
+        });
+      });
+
+      // play again re-shows the start screen so a new count can be picked
+      playAgainBtn.addEventListener("click", () => {
+        resultsWrapper.style.display = "none";
+        startWrapper.style.display = "flex";
+      });
+    </script>
+  </body>
+</html>

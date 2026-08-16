@@ -1,0 +1,1001 @@
+<!doctype html>
+<!-- saved from url=(0056)file:///Users/graemecattermole/Downloads/verbquiz_2.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS Home Screen behaviour -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Noun Quiz" />
+
+    <title>Vocabulary Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link href="./Noun Quiz_files/css2" rel="stylesheet" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --font-chalk:
+          "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
+        --font-jp:
+          "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        --colour-btn-face: #8b5a2b;
+        --colour-btn-active: #8b5a2b;
+        --colour-btn-border: #000000;
+        --colour-heading-text: orange;
+        --colour-correct: #4caf50;
+        --colour-wrong: #e53935;
+        --colour-dim: #f0f0f0;
+      }
+
+      .rotate-message {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: darkred;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2em;
+      }
+      .rotate-message p {
+        color: var(--colour-heading-text);
+        -webkit-text-stroke: 0.8px darkorange;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        line-height: 1.4;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        font-family: var(--font-chalk);
+        background-color: darkred; /* dark pink */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      h1 {
+        font-family: var(--font-chalk);
+        color: var(--colour-heading-text);
+        width: 100%;
+        text-align: center;
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+        -webkit-text-stroke: 1px yellow;
+        font-size: clamp(1.5rem, 8vw, 3.5rem);
+        padding: 0.4em 0.5em 0.2em;
+        margin-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
+
+      .progress {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-weight: bold;
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
+        text-align: center;
+        margin-bottom: 0.5em;
+        flex-shrink: 0;
+      }
+
+      /* START SCREEN */
+      .start-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3vh;
+        width: 100%;
+        padding: 2vh 6vw;
+      }
+
+      .start-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.3rem, 6vw, 2rem);
+        text-align: center;
+      }
+
+      .start-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .game-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+      }
+
+      .question-card {
+        background: white;
+        border: 3px solid var(--colour-btn-border);
+        border-radius: 20px;
+        padding: 0.8em 1em;
+        margin-bottom: 4vh;
+        text-align: center;
+        width: 100%;
+        max-width: 480px;
+      }
+      .question-jp {
+        font-size: clamp(2rem, 11vw, 4.5rem);
+        color: #333;
+        font-family: var(--font-jp); /* changed back from var(--font-jp) */
+        line-height: 1.3;
+      }
+
+      .answers {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 4vw, 24px);
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .btn {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        transition:
+          transform 0.1s ease,
+          background 0.15s ease;
+        font-size: clamp(1.1rem, 6vw, 2rem);
+        height: clamp(60px, 12vh, 100px);
+        padding: 0 0.6em;
+      }
+      .answers .btn {
+        font-family: var(--font-jp);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn.correct {
+        background: var(--colour-correct);
+        color: white;
+      }
+
+      .btn.wrong {
+        background: var(--colour-wrong);
+        color: white;
+      }
+
+      .btn.dim {
+        background: var(--colour-dim);
+        color: #999;
+      }
+
+      .btn:disabled {
+        cursor: default;
+      }
+
+      /* RESULTS SCREEN */
+      .results-wrapper {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+        overflow-y: auto;
+      }
+
+      .score {
+        color: white;
+        -webkit-text-stroke: 1.5px darkorange;
+        font-size: clamp(2rem, 10vw, 4rem);
+        text-align: center;
+        margin-bottom: 0.3em;
+      }
+
+      .score-sub {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1rem, 5vw, 1.6rem);
+        text-align: center;
+        margin-bottom: 1em;
+      }
+
+      .mistakes-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        text-align: center;
+        margin-bottom: 0.6em;
+      }
+
+      .mistakes-list {
+        list-style: none;
+        width: 100%;
+        max-width: 520px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 2em;
+      }
+
+      .mistakes-list li {
+        background: white;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 12px;
+        padding: 0.6em 1em;
+        font-family: var(--font-chalk);
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        font-size: clamp(0.95rem, 4vw, 1.3rem);
+      }
+
+      .mistakes-list .jp {
+        font-weight: bold;
+        font-family: var(--font-jp);
+      }
+
+      .mistakes-list .en {
+        color: var(--colour-wrong);
+        font-weight: bold;
+        text-align: right;
+      }
+
+      .play-again {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 0.7em 1.6em;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+        transition: transform 0.1s ease;
+      }
+      .play-again:active {
+        transform: scale(0.97);
+        background: var(--colour-btn-active);
+      }
+
+      /* LANDSCAPE IPHONE - ask to rotate */
+      @media screen and (orientation: landscape) and (max-height: 450px) {
+        .rotate-message {
+          display: flex;
+        }
+        h1,
+        .progress,
+        .start-wrapper,
+        .game-wrapper,
+        .results-wrapper,
+        .back-btn {
+          display: none;
+        }
+      }
+
+      /* PORTRAIT IPHONE tweaks */
+      @media screen and (orientation: portrait) and (max-width: 430px) {
+        h1 {
+          font-size: clamp(1.3rem, 9vw, 2.4rem) !important;
+          margin-top: max(50px, env(safe-area-inset-top, 50px)) !important;
+        }
+        .game-wrapper {
+          padding: 1vh 6vw 3vh;
+        }
+        .question-card {
+          margin-bottom: 3vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rotate-message">
+      <p>🔄 Please rotate your device to portrait mode!</p>
+    </div>
+
+    <a class="back-btn" href="vv.html">← Back</a>
+    <h1>Verbs Quiz</h1>
+    <div class="progress" id="progress" style="display: none">
+      Question 1 / 20
+    </div>
+
+    <div class="start-wrapper" id="startWrapper">
+      <div class="start-title">How many questions?</div>
+      <div class="start-buttons">
+        <button class="btn" data-count="20">20</button>
+        <button class="btn" data-count="30">30</button>
+        <button class="btn" data-count="40">40</button>
+      </div>
+    </div>
+
+    <div class="game-wrapper" id="gameWrapper" style="display: none">
+      <div class="question-card">
+        <div class="question-jp" id="questionJp"></div>
+      </div>
+      <div class="answers" id="answers"></div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper" style="display: none">
+      <div class="score" id="score"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="mistakes-title" id="mistakesTitle" style="display: none">
+        Words to review
+      </div>
+      <ul class="mistakes-list" id="mistakesList"></ul>
+      <button class="play-again" id="playAgainBtn">Play Again</button>
+    </div>
+
+    <script>
+      // ---- Noun bank: English noun + Japanese meaning ----
+      const VERB_BANK = [
+        { en: "accept", jp: "受け入れる" },
+        { en: "achieve", jp: "達成する" },
+        { en: "act", jp: "演じる" },
+        { en: "add", jp: "加える" },
+        { en: "admire", jp: "感心する" },
+        { en: "admit", jp: "認める" },
+        { en: "advise", jp: "助言する" },
+        { en: "afford", jp: "余裕がある" },
+        { en: "agree", jp: "同意する" },
+        { en: "aim", jp: "目指す" },
+        { en: "allow", jp: "許可する" },
+        { en: "announce", jp: "発表する" },
+        { en: "annoy", jp: "いらいらさせる" },
+        { en: "apologise", jp: "謝る" },
+        { en: "appear", jp: "現れる" },
+        { en: "apply", jp: "申し込む" },
+        { en: "approach", jp: "近づく" },
+        { en: "approve", jp: "承認する" },
+        { en: "argue", jp: "議論する" },
+        { en: "arrange", jp: "手配する" },
+        { en: "arrest", jp: "逮捕する" },
+        { en: "arrive", jp: "到着する" },
+        { en: "ask", jp: "尋ねる" },
+        { en: "attach", jp: "添付する" },
+        { en: "attack", jp: "攻撃する" },
+        { en: "attempt", jp: "試みる" },
+        { en: "attend", jp: "出席する" },
+        { en: "attract", jp: "引きつける" },
+        { en: "avoid", jp: "避ける" },
+        { en: "bake", jp: "焼く" },
+        { en: "bark", jp: "吠える" },
+        { en: "battle", jp: "戦う" },
+        { en: "beat", jp: "打ち負かす" },
+        { en: "become", jp: "〜になる" },
+        { en: "beg", jp: "懇願する" },
+        { en: "begin", jp: "始める" },
+        { en: "behave", jp: "振る舞う" },
+        { en: "believe", jp: "信じる" },
+        { en: "belong", jp: "属する" },
+        { en: "bite", jp: "噛む" },
+        { en: "bleed", jp: "出血する" },
+        { en: "blow", jp: "吹く" },
+        { en: "boil", jp: "沸騰する" },
+        { en: "book", jp: "予約する" },
+        { en: "borrow", jp: "借りる" },
+        { en: "bother", jp: "悩ませる" },
+        { en: "bounce", jp: "跳ねる" },
+        { en: "brake", jp: "ブレーキをかける" },
+        { en: "break", jp: "壊す" },
+        { en: "breathe", jp: "呼吸する" },
+        { en: "bring", jp: "持ってくる" },
+        { en: "brush", jp: "磨く" },
+        { en: "build", jp: "建てる" },
+        { en: "burn", jp: "燃える" },
+        { en: "bury", jp: "埋める" },
+        { en: "buy", jp: "買う" },
+        { en: "calculate", jp: "計算する" },
+        { en: "call", jp: "呼ぶ" },
+        { en: "cancel", jp: "取り消す" },
+        { en: "care", jp: "気にかける" },
+        { en: "carry", jp: "運ぶ" },
+        { en: "catch", jp: "捕まえる" },
+        { en: "celebrate", jp: "祝う" },
+        { en: "change", jp: "変える" },
+        { en: "charge", jp: "請求する" },
+        { en: "chat", jp: "おしゃべりする" },
+        { en: "cheat", jp: "ずるをする" },
+        { en: "check", jp: "確認する" },
+        { en: "choose", jp: "選ぶ" },
+        { en: "clap", jp: "拍手する" },
+        { en: "clean", jp: "掃除する" },
+        { en: "clear", jp: "片付ける" },
+        { en: "click", jp: "クリックする" },
+        { en: "climb", jp: "登る" },
+        { en: "close", jp: "閉じる" },
+        { en: "collect", jp: "集める" },
+        { en: "comb", jp: "とかす" },
+        { en: "come", jp: "来る" },
+        { en: "communicate", jp: "伝える" },
+        { en: "compare", jp: "比べる" },
+        { en: "compete", jp: "競争する" },
+        { en: "complain", jp: "文句を言う" },
+        { en: "concentrate", jp: "集中する" },
+        { en: "confirm", jp: "確認する" },
+        { en: "connect", jp: "つなぐ" },
+        { en: "consider", jp: "考慮する" },
+        { en: "contact", jp: "連絡する" },
+        { en: "contain", jp: "含む" },
+        { en: "continue", jp: "続ける" },
+        { en: "control", jp: "制御する" },
+        { en: "convince", jp: "納得させる" },
+        { en: "cook", jp: "料理する" },
+        { en: "copy", jp: "コピーする" },
+        { en: "correct", jp: "訂正する" },
+        { en: "cost", jp: "かかる" },
+        { en: "count", jp: "数える" },
+        { en: "cover", jp: "覆う" },
+        { en: "crash", jp: "衝突する" },
+        { en: "create", jp: "作り出す" },
+        { en: "cross", jp: "横断する" },
+        { en: "cry", jp: "泣く" },
+        { en: "cut", jp: "切る" },
+        { en: "damage", jp: "損害を与える" },
+        { en: "dance", jp: "踊る" },
+        { en: "decide", jp: "決める" },
+        { en: "declare", jp: "宣言する" },
+        { en: "decorate", jp: "飾る" },
+        { en: "decrease", jp: "減少する" },
+        { en: "defeat", jp: "打ち負かす" },
+        { en: "defend", jp: "守る" },
+        { en: "deliver", jp: "配達する" },
+        { en: "demand", jp: "要求する" },
+        { en: "deny", jp: "否定する" },
+        { en: "depart", jp: "出発する" },
+        { en: "describe", jp: "説明する" },
+        { en: "deserve", jp: "値する" },
+        { en: "design", jp: "デザインする" },
+        { en: "destroy", jp: "破壊する" },
+        { en: "develop", jp: "発展させる" },
+        { en: "dial", jp: "ダイヤルする" },
+        { en: "die", jp: "死ぬ" },
+        { en: "dig", jp: "掘る" },
+        { en: "disagree", jp: "同意しない" },
+        { en: "disappear", jp: "消える" },
+        { en: "disappoint", jp: "失望させる" },
+        { en: "discover", jp: "発見する" },
+        { en: "discuss", jp: "議論する" },
+        { en: "dislike", jp: "嫌う" },
+        { en: "display", jp: "展示する" },
+        { en: "disturb", jp: "邪魔する" },
+        { en: "dive", jp: "飛び込む" },
+        { en: "divide", jp: "分ける" },
+        { en: "download", jp: "ダウンロードする" },
+        { en: "draw", jp: "描く" },
+        { en: "dream", jp: "夢を見る" },
+        { en: "dress", jp: "服を着せる" },
+        { en: "drive", jp: "運転する" },
+        { en: "drop", jp: "落とす" },
+        { en: "dry", jp: "乾かす" },
+        { en: "earn", jp: "稼ぐ" },
+        { en: "eat", jp: "食べる" },
+        { en: "email", jp: "メールする" },
+        { en: "employ", jp: "雇う" },
+        { en: "encourage", jp: "励ます" },
+        { en: "enjoy", jp: "楽しむ" },
+        { en: "enter", jp: "入る" },
+        { en: "entertain", jp: "楽しませる" },
+        { en: "escape", jp: "逃げる" },
+        { en: "examine", jp: "調べる" },
+        { en: "exchange", jp: "交換する" },
+        { en: "exercise", jp: "運動する" },
+        { en: "exist", jp: "存在する" },
+        { en: "expect", jp: "期待する" },
+        { en: "explain", jp: "説明する" },
+        { en: "explode", jp: "爆発する" },
+        { en: "explore", jp: "探検する" },
+        { en: "fail", jp: "失敗する" },
+        { en: "fall", jp: "落ちる" },
+        { en: "fasten", jp: "締める" },
+        { en: "feed", jp: "餌を与える" },
+        { en: "feel", jp: "感じる" },
+        { en: "fight", jp: "戦う" },
+        { en: "fill", jp: "満たす" },
+        { en: "find", jp: "見つける" },
+        { en: "finish", jp: "終える" },
+        { en: "fit", jp: "合う" },
+        { en: "fix", jp: "直す" },
+        { en: "float", jp: "浮く" },
+        { en: "fly", jp: "飛ぶ" },
+        { en: "fold", jp: "折る" },
+        { en: "follow", jp: "従う" },
+        { en: "forbid", jp: "禁じる" },
+        { en: "forget", jp: "忘れる" },
+        { en: "forgive", jp: "許す" },
+        { en: "fry", jp: "揚げる" },
+        { en: "gain", jp: "得る" },
+        { en: "get", jp: "得る" },
+        { en: "give", jp: "与える" },
+        { en: "go", jp: "行く" },
+        { en: "greet", jp: "挨拶する" },
+        { en: "grow", jp: "育つ" },
+        { en: "guess", jp: "推測する" },
+        { en: "hang", jp: "掛ける" },
+        { en: "happen", jp: "起こる" },
+        { en: "hate", jp: "嫌う" },
+        { en: "have", jp: "持つ" },
+        { en: "hear", jp: "聞こえる" },
+        { en: "heat", jp: "温める" },
+        { en: "help", jp: "助ける" },
+        { en: "hide", jp: "隠す" },
+        { en: "hire", jp: "雇う" },
+        { en: "hit", jp: "打つ" },
+        { en: "hold", jp: "持つ" },
+        { en: "hope", jp: "望む" },
+        { en: "hunt", jp: "狩る" },
+        { en: "hurry", jp: "急ぐ" },
+        { en: "hurt", jp: "傷つける" },
+        { en: "identify", jp: "特定する" },
+        { en: "ignore", jp: "無視する" },
+        { en: "imagine", jp: "想像する" },
+        { en: "improve", jp: "改善する" },
+        { en: "include", jp: "含める" },
+        { en: "increase", jp: "増える" },
+        { en: "influence", jp: "影響を与える" },
+        { en: "inform", jp: "知らせる" },
+        { en: "injure", jp: "負傷させる" },
+        { en: "insist", jp: "主張する" },
+        { en: "inspire", jp: "触発する" },
+        { en: "install", jp: "設置する" },
+        { en: "instruct", jp: "指示する" },
+        { en: "intend", jp: "意図する" },
+        { en: "interrupt", jp: "邪魔する" },
+        { en: "introduce", jp: "紹介する" },
+        { en: "invent", jp: "発明する" },
+        { en: "invite", jp: "招待する" },
+        { en: "iron", jp: "アイロンをかける" },
+        { en: "join", jp: "参加する" },
+        { en: "joke", jp: "冗談を言う" },
+        { en: "judge", jp: "判断する" },
+        { en: "jump", jp: "跳ぶ" },
+        { en: "keep", jp: "保つ" },
+        { en: "kick", jp: "蹴る" },
+        { en: "kill", jp: "殺す" },
+        { en: "kiss", jp: "キスする" },
+        { en: "knit", jp: "編む" },
+        { en: "knock", jp: "ノックする" },
+        { en: "know", jp: "知る" },
+        { en: "land", jp: "着陸する" },
+        { en: "last", jp: "続く" },
+        { en: "laugh", jp: "笑う" },
+        { en: "lay", jp: "置く" },
+        { en: "lead", jp: "導く" },
+        { en: "learn", jp: "学ぶ" },
+        { en: "leave", jp: "去る" },
+        { en: "lend", jp: "貸す" },
+        { en: "lie", jp: "嘘をつく" },
+        { en: "lift", jp: "持ち上げる" },
+        { en: "like", jp: "好む" },
+        { en: "limit", jp: "制限する" },
+        { en: "listen", jp: "聞く" },
+        { en: "live", jp: "住む" },
+        { en: "locate", jp: "位置する" },
+        { en: "lock", jp: "鍵をかける" },
+        { en: "look", jp: "見る" },
+        { en: "lose", jp: "失う" },
+        { en: "love", jp: "愛する" },
+        { en: "mail", jp: "郵送する" },
+        { en: "make", jp: "作る" },
+        { en: "manage", jp: "経営する" },
+        { en: "mark", jp: "印をつける" },
+        { en: "marry", jp: "結婚する" },
+        { en: "match", jp: "合う" },
+        { en: "matter", jp: "重要である" },
+        { en: "mean", jp: "意味する" },
+        { en: "measure", jp: "測る" },
+        { en: "meet", jp: "会う" },
+        { en: "melt", jp: "溶ける" },
+        { en: "mend", jp: "修理する" },
+        { en: "mention", jp: "言及する" },
+        { en: "mind", jp: "気にする" },
+        { en: "miss", jp: "逃す" },
+        { en: "mix", jp: "混ぜる" },
+        { en: "move", jp: "動く" },
+        { en: "multiply", jp: "掛け算する" },
+        { en: "need", jp: "必要とする" },
+        { en: "notice", jp: "気づく" },
+        { en: "obtain", jp: "得る" },
+        { en: "occur", jp: "起こる" },
+        { en: "offer", jp: "申し出る" },
+        { en: "open", jp: "開ける" },
+        { en: "operate", jp: "操作する" },
+        { en: "order", jp: "注文する" },
+        { en: "organise", jp: "整理する" },
+        { en: "owe", jp: "借りがある" },
+        { en: "own", jp: "所有する" },
+        { en: "pack", jp: "荷造りする" },
+        { en: "paint", jp: "塗る" },
+        { en: "park", jp: "駐車する" },
+        { en: "pass", jp: "合格する" },
+        { en: "pause", jp: "一時停止する" },
+        { en: "pay", jp: "支払う" },
+        { en: "peel", jp: "皮をむく" },
+        { en: "permit", jp: "許可する" },
+        { en: "persuade", jp: "説得する" },
+        { en: "phone", jp: "電話する" },
+        { en: "pick", jp: "選ぶ" },
+        { en: "plan", jp: "計画する" },
+        { en: "plant", jp: "植える" },
+        { en: "play", jp: "遊ぶ" },
+        { en: "point", jp: "指さす" },
+        { en: "pour", jp: "注ぐ" },
+        { en: "practise", jp: "練習する" },
+        { en: "pray", jp: "祈る" },
+        { en: "predict", jp: "予測する" },
+        { en: "prefer", jp: "好む" },
+        { en: "prepare", jp: "準備する" },
+        { en: "present", jp: "提示する" },
+        { en: "press", jp: "押す" },
+        { en: "pretend", jp: "ふりをする" },
+        { en: "prevent", jp: "防ぐ" },
+        { en: "print", jp: "印刷する" },
+        { en: "produce", jp: "生産する" },
+        { en: "promise", jp: "約束する" },
+        { en: "protect", jp: "保護する" },
+        { en: "prove", jp: "証明する" },
+        { en: "provide", jp: "提供する" },
+        { en: "publish", jp: "出版する" },
+        { en: "pull", jp: "引く" },
+        { en: "punish", jp: "罰する" },
+        { en: "push", jp: "押す" },
+        { en: "put", jp: "置く" },
+        { en: "question", jp: "質問する" },
+        { en: "queue", jp: "並ぶ" },
+        { en: "race", jp: "競争する" },
+        { en: "raise", jp: "上げる" },
+        { en: "reach", jp: "到達する" },
+        { en: "react", jp: "反応する" },
+        { en: "read", jp: "読む" },
+        { en: "realise", jp: "気づく" },
+        { en: "receive", jp: "受け取る" },
+        { en: "recognise", jp: "認識する" },
+        { en: "recommend", jp: "勧める" },
+        { en: "record", jp: "記録する" },
+        { en: "recover", jp: "回復する" },
+        { en: "recycle", jp: "リサイクルする" },
+        { en: "reduce", jp: "減らす" },
+        { en: "refuse", jp: "拒否する" },
+        { en: "regret", jp: "後悔する" },
+        { en: "relax", jp: "くつろぐ" },
+        { en: "remember", jp: "覚えている" },
+        { en: "remind", jp: "思い出させる" },
+        { en: "remove", jp: "取り除く" },
+        { en: "rent", jp: "借りる" },
+        { en: "repair", jp: "修理する" },
+        { en: "repeat", jp: "繰り返す" },
+        { en: "reply", jp: "返事する" },
+        { en: "report", jp: "報告する" },
+        { en: "rescue", jp: "救助する" },
+        { en: "reserve", jp: "予約する" },
+        { en: "rest", jp: "休む" },
+        { en: "retire", jp: "引退する" },
+        { en: "return", jp: "戻る" },
+        { en: "reward", jp: "報いる" },
+        { en: "ride", jp: "乗る" },
+        { en: "ring", jp: "鳴る" },
+        { en: "rise", jp: "上がる" },
+        { en: "rob", jp: "奪う" },
+        { en: "run", jp: "走る" },
+        { en: "sail", jp: "航海する" },
+        { en: "save", jp: "救う" },
+        { en: "say", jp: "言う" },
+        { en: "score", jp: "得点する" },
+        { en: "scream", jp: "叫ぶ" },
+        { en: "search", jp: "探す" },
+        { en: "select", jp: "選ぶ" },
+        { en: "sell", jp: "売る" },
+        { en: "send", jp: "送る" },
+        { en: "serve", jp: "仕える" },
+        { en: "sew", jp: "縫う" },
+        { en: "shake", jp: "揺れる" },
+        { en: "share", jp: "共有する" },
+        { en: "shave", jp: "ひげを剃る" },
+        { en: "shine", jp: "輝く" },
+        { en: "shoot", jp: "撃つ" },
+        { en: "shout", jp: "叫ぶ" },
+        { en: "show", jp: "見せる" },
+        { en: "shut", jp: "閉める" },
+        { en: "sign", jp: "署名する" },
+        { en: "sing", jp: "歌う" },
+        { en: "sink", jp: "沈む" },
+        { en: "sit", jp: "座る" },
+        { en: "sleep", jp: "眠る" },
+        { en: "slip", jp: "滑る" },
+        { en: "smell", jp: "匂いがする" },
+        { en: "smile", jp: "微笑む" },
+        { en: "smoke", jp: "タバコを吸う" },
+        { en: "solve", jp: "解決する" },
+        { en: "sound", jp: "聞こえる" },
+        { en: "speak", jp: "話す" },
+        { en: "spell", jp: "つづる" },
+        { en: "spend", jp: "使う" },
+        { en: "spill", jp: "こぼす" },
+        { en: "stand", jp: "立つ" },
+        { en: "start", jp: "始める" },
+        { en: "steal", jp: "盗む" },
+        { en: "stir", jp: "かき混ぜる" },
+        { en: "stop", jp: "止まる" },
+        { en: "study", jp: "勉強する" },
+        { en: "subtract", jp: "引き算する" },
+        { en: "succeed", jp: "成功する" },
+        { en: "suffer", jp: "苦しむ" },
+        { en: "suggest", jp: "提案する" },
+        { en: "suit", jp: "似合う" },
+        { en: "support", jp: "支える" },
+        { en: "suppose", jp: "思う" },
+        { en: "surf", jp: "サーフィンする" },
+        { en: "surprise", jp: "驚かせる" },
+        { en: "surround", jp: "囲む" },
+        { en: "swim", jp: "泳ぐ" },
+        { en: "take", jp: "取る" },
+        { en: "talk", jp: "話す" },
+        { en: "taste", jp: "味わう" },
+        { en: "teach", jp: "教える" },
+        { en: "tear", jp: "破る" },
+        { en: "tell", jp: "伝える" },
+        { en: "test", jp: "試す" },
+        { en: "text", jp: "メールする" },
+        { en: "thank", jp: "感謝する" },
+        { en: "think", jp: "考える" },
+        { en: "throw", jp: "投げる" },
+        { en: "tidy", jp: "片付ける" },
+        { en: "touch", jp: "触る" },
+        { en: "train", jp: "訓練する" },
+        { en: "translate", jp: "翻訳する" },
+        { en: "travel", jp: "旅行する" },
+        { en: "treat", jp: "扱う" },
+        { en: "trust", jp: "信頼する" },
+        { en: "try", jp: "試す" },
+        { en: "turn", jp: "回る" },
+        { en: "type", jp: "タイプする" },
+        { en: "understand", jp: "理解する" },
+        { en: "undress", jp: "服を脱ぐ" },
+        { en: "unpack", jp: "荷ほどきする" },
+        { en: "use", jp: "使う" },
+        { en: "vote", jp: "投票する" },
+        { en: "wait", jp: "待つ" },
+        { en: "wake", jp: "目覚める" },
+        { en: "walk", jp: "歩く" },
+        { en: "want", jp: "欲しい" },
+        { en: "warn", jp: "警告する" },
+        { en: "wash", jp: "洗う" },
+        { en: "waste", jp: "無駄にする" },
+        { en: "watch", jp: "見る" },
+        { en: "wave", jp: "手を振る" },
+        { en: "wear", jp: "着る" },
+        { en: "weigh", jp: "重さを量る" },
+        { en: "win", jp: "勝つ" },
+        { en: "wish", jp: "願う" },
+        { en: "wonder", jp: "疑問に思う" },
+        { en: "work", jp: "働く" },
+        { en: "worry", jp: "心配する" },
+        { en: "wrap", jp: "包む" },
+        { en: "write", jp: "書く" },
+      ];
+
+      let QUESTIONS_PER_GAME = 20; // now variable, set by start-screen buttons
+
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let wrongAnswers = [];
+
+      const startWrapper = document.getElementById("startWrapper");
+      const gameWrapper = document.getElementById("gameWrapper");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const questionJpEl = document.getElementById("questionJp");
+      const answersEl = document.getElementById("answers");
+      const progressEl = document.getElementById("progress");
+      const scoreEl = document.getElementById("score");
+      const scoreSubEl = document.getElementById("scoreSub");
+      const mistakesTitleEl = document.getElementById("mistakesTitle");
+      const mistakesListEl = document.getElementById("mistakesList");
+      const playAgainBtn = document.getElementById("playAgainBtn");
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function startGame() {
+        questions = shuffle(VERB_BANK).slice(0, QUESTIONS_PER_GAME);
+        currentIndex = 0;
+        score = 0;
+        wrongAnswers = [];
+        startWrapper.style.display = "none";
+        resultsWrapper.style.display = "none";
+        gameWrapper.style.display = "flex";
+        progressEl.style.display = "block";
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const q = questions[currentIndex];
+        progressEl.textContent =
+          "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
+        questionJpEl.textContent = q.jp; // changed from q.jp
+
+        const distractorPool = VERB_BANK.filter((v) => v.en !== q.en);
+        const distractors = shuffle(distractorPool).slice(0, 2);
+        const options = shuffle([q, ...distractors]);
+
+        answersEl.innerHTML = "";
+        options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.className = "btn";
+          btn.textContent = opt.en; // changed from opt.en
+          btn.addEventListener("click", () => handleAnswer(opt, q, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(selected, correctQ, clickedBtn) {
+        const allBtns = answersEl.querySelectorAll(".btn");
+        allBtns.forEach((b) => (b.disabled = true));
+
+        const isCorrect = selected.en === correctQ.en;
+
+        allBtns.forEach((b) => {
+          if (b.textContent === correctQ.en) {
+            b.classList.add("correct");
+          } else if (b === clickedBtn) {
+            b.classList.add("wrong");
+          } else {
+            b.classList.add("dim");
+          }
+        });
+
+        if (isCorrect) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            jp: correctQ.jp,
+            correct: correctQ.en,
+            chosen: selected.en,
+          });
+        }
+
+        setTimeout(() => {
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        }, 900);
+      }
+      function showResults() {
+        gameWrapper.style.display = "none";
+        progressEl.style.display = "none";
+        resultsWrapper.style.display = "flex";
+
+        scoreEl.textContent = score + " / " + QUESTIONS_PER_GAME;
+        if (score === QUESTIONS_PER_GAME) {
+          scoreSubEl.textContent = "Perfect score! 🎉";
+        } else if (score >= QUESTIONS_PER_GAME * 0.7) {
+          scoreSubEl.textContent = "Great job!";
+        } else {
+          scoreSubEl.textContent = "Keep practising!";
+        }
+
+        mistakesListEl.innerHTML = "";
+        if (wrongAnswers.length > 0) {
+          mistakesTitleEl.style.display = "block";
+          wrongAnswers.forEach((w) => {
+            const li = document.createElement("li");
+            const jpSpan = document.createElement("span");
+            jpSpan.className = "jp";
+            jpSpan.textContent = w.jp;
+            const enSpan = document.createElement("span");
+            enSpan.className = "en";
+            enSpan.textContent = w.correct;
+            li.appendChild(jpSpan);
+            li.appendChild(enSpan);
+            mistakesListEl.appendChild(li);
+          });
+        } else {
+          mistakesTitleEl.style.display = "none";
+        }
+      }
+
+      // start-screen buttons pick the question count and begin the game
+      document.querySelectorAll(".start-buttons .btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          QUESTIONS_PER_GAME = parseInt(btn.dataset.count, 10);
+          startGame();
+        });
+      });
+
+      // play again re-shows the start screen so a new count can be picked
+      playAgainBtn.addEventListener("click", () => {
+        resultsWrapper.style.display = "none";
+        startWrapper.style.display = "flex";
+      });
+    </script>
+  </body>
+</html>

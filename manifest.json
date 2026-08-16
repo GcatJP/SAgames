@@ -1,0 +1,16 @@
+{
+  "name": "Adventure Island JHS1",
+  "short_name": "Adv Island J1",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#08328c",
+  "theme_color": "#08328c",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "jhs1hp.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}
