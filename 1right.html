@@ -1,0 +1,1270 @@
+<!doctype html>
+<!-- saved from url=(0067)file:///Users/graemecattermole/Downloads/grammar_right_wrong_1.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0,
+          maximum-scale=1.0, user-scalable=no"
+    />
+
+    <!-- iOS Home Screen behaviour -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Grammar Check" />
+
+    <title>Right or Wrong? Grammar Quiz</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      :root {
+        --font-chalk:
+          "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
+        --colour-btn-face: #8b5a2b;
+        --colour-btn-active: #8b5a2b;
+        --colour-btn-border: #000000;
+        --colour-heading-text: orange;
+        --colour-correct: #4caf50;
+        --colour-wrong: #e53935;
+        --colour-dim: #f0f0f0;
+        --colour-right-btn: #dff5e1;
+        --colour-wrong-btn: #fde1e1;
+      }
+
+      .rotate-message {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: grey;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2em;
+      }
+      .rotate-message p {
+        color: var(--colour-heading-text);
+        -webkit-text-stroke: 0.8px darkorange;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        line-height: 1.4;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      body {
+        font-family: var(--font-chalk);
+        background-color: darkred;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: hidden;
+        transition: background 0.3s ease;
+      }
+
+      h1 {
+        font-family: var(--font-chalk);
+        color: var(--colour-heading-text);
+        width: 100%;
+        text-align: center;
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+        -webkit-text-stroke: 1px yellow;
+        font-size: clamp(1.4rem, 7vw, 3rem);
+        padding: 0.4em 0.5em 0.2em;
+        margin-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
+
+      .progress {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-weight: bold;
+        font-size: clamp(0.9rem, 4vw, 1.3rem);
+        text-align: center;
+        margin-bottom: 0.5em;
+        flex-shrink: 0;
+      }
+
+      /* START SCREEN */
+      .start-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3vh;
+        width: 100%;
+        padding: 2vh 6vw;
+      }
+
+      .start-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.2rem, 5.5vw, 1.9rem);
+        text-align: center;
+      }
+
+      .start-sub {
+        color: white;
+        opacity: 0.9;
+        font-size: clamp(0.85rem, 3.6vw, 1.1rem);
+        text-align: center;
+        max-width: 420px;
+      }
+
+      .start-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(14px, 4vw, 22px);
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .game-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+      }
+
+      .question-card {
+        background: white;
+        border: 3px solid var(--colour-btn-border);
+        border-radius: 20px;
+        padding: 1.2em 1.2em;
+        margin-bottom: 4vh;
+        text-align: center;
+        width: 100%;
+        max-width: 560px;
+      }
+      .question-label {
+        font-family: var(--font-chalk);
+        font-size: clamp(0.75rem, 3vw, 0.95rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #999;
+        margin-bottom: 0.5em;
+      }
+      .question-sentence {
+        font-size: clamp(1.3rem, 6vw, 2.1rem);
+        color: #222;
+        font-family: var(--font-chalk);
+        line-height: 1.4;
+      }
+
+      .answers {
+        display: flex;
+        flex-direction: row;
+        gap: clamp(12px, 4vw, 24px);
+        width: 100%;
+        max-width: 480px;
+      }
+
+      .btn {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        text-decoration: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        transition:
+          transform 0.1s ease,
+          background 0.15s ease;
+        font-size: clamp(1.1rem, 6vw, 2rem);
+        height: clamp(60px, 12vh, 100px);
+        padding: 0 0.6em;
+      }
+      .answers .btn {
+        flex-direction: column;
+        gap: 0.15em;
+      }
+      .answers .btn-right {
+        background: var(--colour-right-btn);
+      }
+      .answers .btn-wrong {
+        background: var(--colour-wrong-btn);
+      }
+      .btn .icon {
+        font-size: 1.4em;
+        line-height: 1;
+      }
+      .btn .label {
+        font-size: 0.55em;
+        letter-spacing: 0.05em;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn.correct {
+        background: var(--colour-correct);
+        color: white;
+      }
+
+      .btn.wrong {
+        background: var(--colour-wrong);
+        color: white;
+      }
+
+      .btn.dim {
+        background: var(--colour-dim);
+        color: #999;
+      }
+
+      .btn:disabled {
+        cursor: default;
+      }
+
+      /* RESULTS SCREEN */
+      .results-wrapper {
+        display: none;
+        flex: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        min-height: 0;
+        padding: 2vh 6vw 4vh;
+        overflow-y: auto;
+      }
+
+      .score {
+        color: white;
+        -webkit-text-stroke: 1.5px darkorange;
+        font-size: clamp(2rem, 10vw, 4rem);
+        text-align: center;
+        margin-bottom: 0.3em;
+      }
+
+      .score-sub {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1rem, 5vw, 1.6rem);
+        text-align: center;
+        margin-bottom: 1em;
+      }
+
+      .mistakes-title {
+        color: white;
+        -webkit-text-stroke: 1px darkorange;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        text-align: center;
+        margin-bottom: 0.6em;
+      }
+
+      .mistakes-list {
+        list-style: none;
+        width: 100%;
+        max-width: 560px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 2em;
+      }
+
+      .mistakes-list li {
+        background: white;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 12px;
+        padding: 0.7em 1em;
+        font-family: var(--font-chalk);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        gap: 0.3em;
+        font-size: clamp(0.9rem, 3.6vw, 1.15rem);
+      }
+
+      .mistakes-list .sentence {
+        font-weight: bold;
+      }
+
+      .mistakes-list .verdict {
+        color: var(--colour-wrong);
+        font-weight: bold;
+      }
+      .mistakes-list .verdict.was-right {
+        color: var(--colour-correct);
+      }
+
+      .play-again {
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        color: #333;
+        background: var(--colour-btn-face);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 0.7em 1.6em;
+        font-size: clamp(1.1rem, 5vw, 1.6rem);
+        transition: transform 0.1s ease;
+      }
+      .play-again:active {
+        transform: scale(0.97);
+        background: var(--colour-btn-active);
+      }
+
+      /* LANDSCAPE IPHONE - ask to rotate */
+      @media screen and (orientation: landscape) and (max-height: 450px) {
+        .rotate-message {
+          display: flex;
+        }
+        h1,
+        .progress,
+        .start-wrapper,
+        .game-wrapper,
+        .results-wrapper,
+        .back-btn {
+          display: none;
+        }
+      }
+
+      /* PORTRAIT IPHONE tweaks */
+      @media screen and (orientation: portrait) and (max-width: 430px) {
+        h1 {
+          font-size: clamp(1.2rem, 8vw, 2.1rem) !important;
+          margin-top: max(50px, env(safe-area-inset-top, 50px)) !important;
+        }
+        .game-wrapper {
+          padding: 1vh 6vw 3vh;
+        }
+        .question-card {
+          margin-bottom: 3vh;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="rotate-message">
+      <p>🔄 Please rotate your device to portrait mode!</p>
+    </div>
+
+    <a class="back-btn" href="grammar.html">← Back</a>
+    <h1>Right or Wrong?</h1>
+    <div class="progress" id="progress" style="display: none">
+      Question 1 / 20
+    </div>
+
+    <div class="start-wrapper" id="startWrapper">
+      <div class="start-title">Grammar Check</div>
+      <div class="start-sub">
+        Read each sentence. Is the grammar right or wrong?
+      </div>
+      <div class="start-buttons">
+        <button class="btn" data-count="20">20</button>
+        <button class="btn" data-count="30">30</button>
+        <button class="btn" data-count="40">40</button>
+      </div>
+    </div>
+
+    <div class="game-wrapper" id="gameWrapper" style="display: none">
+      <div class="question-card">
+        <div class="question-label">Is this sentence correct?</div>
+        <div class="question-sentence" id="questionSentence"></div>
+      </div>
+      <div class="answers" id="answers">
+        <button class="btn btn-right" id="rightBtn">
+          <span class="icon">✓</span><span class="label">RIGHT</span>
+        </button>
+        <button class="btn btn-wrong" id="wrongBtn">
+          <span class="icon">✗</span><span class="label">WRONG</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="results-wrapper" id="resultsWrapper" style="display: none">
+      <div class="score" id="score"></div>
+      <div class="score-sub" id="scoreSub"></div>
+      <div class="mistakes-title" id="mistakesTitle" style="display: none">
+        Sentences to review
+      </div>
+      <ul class="mistakes-list" id="mistakesList"></ul>
+      <button class="play-again" id="playAgainBtn">Play Again</button>
+    </div>
+
+    <script>
+      // ---- Grammar bank: sentence + isCorrect (based on A2 Grammar List) ----
+      // 150 grammatically correct sentences + 150 grammatically incorrect sentences
+      // ---- Grammar bank: sentence + isCorrect (based on Skills for English B1 Grammar List) ----
+      // Covers grammar points that are NEW at B1 (beyond the existing A2 quiz):
+      // present perfect continuous, past perfect, past perfect continuous, future continuous,
+      // passive voice, used to/be used to/get used to, phrasal verbs, gerunds & infinitives,
+      // modals (permission/requests, deduction, suggestion), relative clauses, adverb clauses,
+      // all four conditionals, reflexive/reciprocal pronouns, -ing/-ed adjectives, intensifiers,
+      // adjective ordering, comparative adverbs, adverbs with perfect tenses, discourse markers,
+      // question tags.
+      // 156 grammatically correct sentences + 156 grammatically incorrect sentences
+      const GRAMMAR_BANK = [
+        // 1. Present perfect continuous
+        { text: "He has been running since 3:30.", correct: true },
+        { text: "I've been thinking about this all day.", correct: true },
+        {
+          text: "She has been studying Japanese for three years.",
+          correct: true,
+        },
+        { text: "We have been waiting here since noon.", correct: true },
+        {
+          text: "They have been practising basketball all week.",
+          correct: true,
+        },
+        { text: "It has been raining since this morning.", correct: true },
+        { text: "He has been run since 3:30.", correct: false },
+        { text: "I've been think about this all day.", correct: false },
+        {
+          text: "She have been studying Japanese for three years.",
+          correct: false,
+        },
+        { text: "We has been waiting here since noon.", correct: false },
+        {
+          text: "They have being practising basketball all week.",
+          correct: false,
+        },
+        { text: "It have been raining since this morning.", correct: false },
+
+        // 2. Past perfect
+        { text: "She had left the building by 5 pm.", correct: true },
+        { text: "He had wanted to stay longer.", correct: true },
+        {
+          text: "We had finished dinner before the movie started.",
+          correct: true,
+        },
+        { text: "They had already gone home when I arrived.", correct: true },
+        { text: "I had never seen snow before that winter.", correct: true },
+        {
+          text: "The train had departed by the time we got there.",
+          correct: true,
+        },
+        { text: "She had leave the building by 5 pm.", correct: false },
+        { text: "He had want to stay longer.", correct: false },
+        {
+          text: "We had finish dinner before the movie started.",
+          correct: false,
+        },
+        { text: "They have already gone home when I arrived.", correct: false },
+        { text: "I had never see snow before that winter.", correct: false },
+        {
+          text: "The train had departing by the time we got there.",
+          correct: false,
+        },
+
+        // 3. Past perfect continuous
+        {
+          text: "She had been staying at the hotel when the power went off.",
+          correct: true,
+        },
+        {
+          text: "They had been asking about the problem until it got solved.",
+          correct: true,
+        },
+        {
+          text: "He had been working there for ten years before he retired.",
+          correct: true,
+        },
+        {
+          text: "We had been walking for an hour when it started to rain.",
+          correct: true,
+        },
+        { text: "I had been waiting for a reply for days.", correct: true },
+        {
+          text: "The children had been playing outside before dinner.",
+          correct: true,
+        },
+        {
+          text: "She had been stay at the hotel when the power went off.",
+          correct: false,
+        },
+        {
+          text: "They had being asking about the problem until it got solved.",
+          correct: false,
+        },
+        {
+          text: "He had been work there for ten years before he retired.",
+          correct: false,
+        },
+        {
+          text: "We had been walk for an hour when it started to rain.",
+          correct: false,
+        },
+        { text: "I have been waiting for a reply for days.", correct: false },
+        {
+          text: "The children had been played outside before dinner.",
+          correct: false,
+        },
+
+        // 4. Future continuous
+        {
+          text: "At this time next week, I will be working on my project.",
+          correct: true,
+        },
+        {
+          text: "They will be travelling to Europe during the summer.",
+          correct: true,
+        },
+        { text: "She will be studying for her exam tonight.", correct: true },
+        { text: "We will be having dinner when you arrive.", correct: true },
+        { text: "He will be waiting at the station at six.", correct: true },
+        {
+          text: "This time tomorrow, I will be flying to Osaka.",
+          correct: true,
+        },
+        {
+          text: "At this time next week, I will working on my project.",
+          correct: false,
+        },
+        {
+          text: "They will be travel to Europe during the summer.",
+          correct: false,
+        },
+        { text: "She will be studies for her exam tonight.", correct: false },
+        { text: "We will be have dinner when you arrive.", correct: false },
+        {
+          text: "He will being waiting at the station at six.",
+          correct: false,
+        },
+        {
+          text: "This time tomorrow, I will be flew to Osaka.",
+          correct: false,
+        },
+
+        // 5. Passive voice (simple tenses)
+        {
+          text: "The newspaper was left at the door by the postman.",
+          correct: true,
+        },
+        { text: "The letter was written by my grandmother.", correct: true },
+        { text: "This bridge was built in 1990.", correct: true },
+        { text: "The windows are cleaned every month.", correct: true },
+        { text: "Dinner is being cooked right now.", correct: true },
+        { text: "The results will be announced tomorrow.", correct: true },
+        {
+          text: "The newspaper was leave at the door by the postman.",
+          correct: false,
+        },
+        { text: "The letter was write by my grandmother.", correct: false },
+        { text: "This bridge was build in 1990.", correct: false },
+        { text: "The windows is cleaned every month.", correct: false },
+        { text: "Dinner is being cook right now.", correct: false },
+        { text: "The results will be announce tomorrow.", correct: false },
+
+        // 6. Used to / be used to / get used to
+        { text: "I used to play in the park when I was young.", correct: true },
+        { text: "I am used to waking up early.", correct: true },
+        { text: "I will get used to it eventually.", correct: true },
+        { text: "She used to live in Tokyo.", correct: true },
+        { text: "He is used to eating spicy food.", correct: true },
+        { text: "They are getting used to the new schedule.", correct: true },
+        {
+          text: "I used to playing in the park when I was young.",
+          correct: false,
+        },
+        { text: "I am used to wake up early.", correct: false },
+        { text: "I will get used it eventually.", correct: false },
+        { text: "She use to live in Tokyo.", correct: false },
+        { text: "He is used to eat spicy food.", correct: false },
+        { text: "They are getting used the new schedule.", correct: false },
+
+        // 7. Phrasal verbs
+        {
+          text: "I'll wash up the dishes as long as you do the drying.",
+          correct: true,
+        },
+        {
+          text: "Don't throw away your old clothes; take them to a charity shop.",
+          correct: true,
+        },
+        {
+          text: "I feel like we don't hang out as much as we used to.",
+          correct: true,
+        },
+        { text: "Please turn off the lights before you leave.", correct: true },
+        {
+          text: "She looked after her little brother yesterday.",
+          correct: true,
+        },
+        { text: "We need to sort out this problem quickly.", correct: true },
+        {
+          text: "I'll wash up the dishes as long as you does the drying.",
+          correct: false,
+        },
+        {
+          text: "Don't throw your old clothes; take them to a charity shop.",
+          correct: false,
+        },
+        {
+          text: "I feel like we don't hang as much as we used to.",
+          correct: false,
+        },
+        {
+          text: "Please turn the lights off before you leaves.",
+          correct: false,
+        },
+        {
+          text: "She look after her little brother yesterday.",
+          correct: false,
+        },
+        {
+          text: "We need to sorting out this problem quickly.",
+          correct: false,
+        },
+
+        // 8. Gerunds and infinitives
+        { text: "Concentrating is not always easy for me.", correct: true },
+        { text: "To travel in Europe can be very expensive.", correct: true },
+        { text: "I look forward to helping you later.", correct: true },
+        { text: "My sister decided to get a job.", correct: true },
+        { text: "The towel is for drying your hair.", correct: true },
+        { text: "I use a standing desk to improve my posture.", correct: true },
+        { text: "Concentrate is not always easy for me.", correct: false },
+        {
+          text: "To traveling in Europe can be very expensive.",
+          correct: false,
+        },
+        { text: "I look forward to help you later.", correct: false },
+        { text: "My sister decided getting a job.", correct: false },
+        { text: "The towel is for dry your hair.", correct: false },
+        {
+          text: "I use a standing desk for improve my posture.",
+          correct: false,
+        },
+
+        // 9. Modals: permission & requests
+        { text: "Could I speak to Henry, please?", correct: true },
+        { text: "Can you do me a favour please?", correct: true },
+        { text: "May I use your pen?", correct: true },
+        { text: "Would you mind opening the window?", correct: true },
+        { text: "Could you pass the salt, please?", correct: true },
+        { text: "Can I borrow your umbrella?", correct: true },
+        { text: "Could I speaking to Henry, please?", correct: false },
+        { text: "Can you doing me a favour please?", correct: false },
+        { text: "May I using your pen?", correct: false },
+        { text: "Would you mind to open the window?", correct: false },
+        { text: "Could you passing the salt, please?", correct: false },
+        { text: "Can I borrowing your umbrella?", correct: false },
+
+        // 10. Modals: deduction
+        {
+          text: "She's ten minutes late. She might be stuck in traffic.",
+          correct: true,
+        },
+        { text: "That's my phone ringing. That must be her.", correct: true },
+        { text: "He isn't answering. He must be asleep.", correct: true },
+        { text: "They can't be home; the lights are off.", correct: true },
+        { text: "This must be the wrong address.", correct: true },
+        { text: "It might rain later, so take an umbrella.", correct: true },
+        {
+          text: "She's ten minutes late. She might being stuck in traffic.",
+          correct: false,
+        },
+        {
+          text: "That's my phone ringing. That must being her.",
+          correct: false,
+        },
+        { text: "He isn't answering. He must asleep.", correct: false },
+        { text: "They can't being home; the lights are off.", correct: false },
+        { text: "This must the wrong address.", correct: false },
+        { text: "It might rains later, so take an umbrella.", correct: false },
+
+        // 11. Modals: suggestion
+        { text: "You should take the bus – it's much faster.", correct: true },
+        { text: "We could meet after lunch.", correct: true },
+        { text: "You ought to see a doctor.", correct: true },
+        { text: "Why don't we go to the beach this weekend?", correct: true },
+        { text: "Let's try the new restaurant downtown.", correct: true },
+        { text: "You should ask your teacher for help.", correct: true },
+        {
+          text: "You should to take the bus – it's much faster.",
+          correct: false,
+        },
+        { text: "We could to meet after lunch.", correct: false },
+        { text: "You ought see a doctor.", correct: false },
+        {
+          text: "Why don't we going to the beach this weekend?",
+          correct: false,
+        },
+        { text: "Let's to try the new restaurant downtown.", correct: false },
+        { text: "You should asking your teacher for help.", correct: false },
+
+        // 12. Relative clauses
+        { text: "I am the player who scores the most goals.", correct: true },
+        {
+          text: "The leisure centre, which was built last year, is just across town.",
+          correct: true,
+        },
+        { text: "This is the book that I told you about.", correct: true },
+        {
+          text: "My uncle, who lives in Kyoto, is visiting us next week.",
+          correct: true,
+        },
+        {
+          text: "The girl whose bike was stolen reported it to the police.",
+          correct: true,
+        },
+        {
+          text: "That's the restaurant where we had dinner last night.",
+          correct: true,
+        },
+        {
+          text: "I am the player which scores the most goals.",
+          correct: false,
+        },
+        {
+          text: "The leisure centre, who was built last year, is just across town.",
+          correct: false,
+        },
+        { text: "This is the book what I told you about.", correct: false },
+        {
+          text: "My uncle, which lives in Kyoto, is visiting us next week.",
+          correct: false,
+        },
+        {
+          text: "The girl who's bike was stolen reported it to the police.",
+          correct: false,
+        },
+        { text: "That's the restaurant which we had dinner.", correct: false },
+
+        // 13. Adverb clauses of time
+        { text: "I usually take a shower before I go to bed.", correct: true },
+        { text: "Can you wait over there until I am ready?", correct: true },
+        { text: "She called me as soon as she arrived.", correct: true },
+        {
+          text: "We'll start the meeting when everyone is here.",
+          correct: true,
+        },
+        { text: "He always locks the door before he leaves.", correct: true },
+        { text: "I'll text you as soon as I land.", correct: true },
+        {
+          text: "I usually take a shower before I going to bed.",
+          correct: false,
+        },
+        { text: "Can you wait over there until I be ready?", correct: false },
+        { text: "She called me as soon as she arriving.", correct: false },
+        {
+          text: "We'll start the meeting when everyone will be here.",
+          correct: false,
+        },
+        { text: "He always locks the door before he leaving.", correct: false },
+        { text: "I'll text you as soon as I will land.", correct: false },
+
+        // 14. Adverb clauses of reason / purpose / contrast
+        {
+          text: "Because of the weather, it's probably best to stay indoors.",
+          correct: true,
+        },
+        { text: "He works hard so there is less to do later.", correct: true },
+        { text: "I work here even though the pay's not great.", correct: true },
+        { text: "She stayed home because she felt sick.", correct: true },
+        { text: "We left early so that we wouldn't be late.", correct: true },
+        {
+          text: "Although it was raining, we still went for a walk.",
+          correct: true,
+        },
+        {
+          text: "Because of the weather, it's probably best staying indoors.",
+          correct: false,
+        },
+        { text: "He works hard so there be less to do later.", correct: false },
+        { text: "I work here even the pay's not great.", correct: false },
+        { text: "She stayed home because of she felt sick.", correct: false },
+        { text: "We left early so we wouldn't been late.", correct: false },
+        {
+          text: "Although it raining, we still went for a walk.",
+          correct: false,
+        },
+
+        // 15. Zero conditional
+        { text: "If you mix red and white, you get pink.", correct: true },
+        { text: "The TV works if you turn it on.", correct: true },
+        { text: "If you heat ice, it melts.", correct: true },
+        { text: "Plants die if they don't get water.", correct: true },
+        { text: "If it's sunny, we usually go to the park.", correct: true },
+        {
+          text: "People feel tired if they don't sleep enough.",
+          correct: true,
+        },
+        { text: "If you mix red and white, you got pink.", correct: false },
+        { text: "The TV works if you turning it on.", correct: false },
+        { text: "If you heat ice, it melting.", correct: false },
+        { text: "Plants die if they didn't get water.", correct: false },
+        { text: "If it's sunny, we usually went to the park.", correct: false },
+        {
+          text: "People feel tired if they don't slept enough.",
+          correct: false,
+        },
+
+        // 16. First conditional
+        { text: "If it rains, I will stay at home.", correct: true },
+        { text: "He'll be late if the train is delayed.", correct: true },
+        { text: "If you study hard, you will pass the test.", correct: true },
+        { text: "We will miss the bus if we don't hurry.", correct: true },
+        { text: "If she calls, I'll answer the phone.", correct: true },
+        { text: "You'll feel better if you get some rest.", correct: true },
+        { text: "If it will rain, I will stay at home.", correct: false },
+        { text: "He'll be late if the train will be delayed.", correct: false },
+        {
+          text: "If you will study hard, you will pass the test.",
+          correct: false,
+        },
+        { text: "We will miss the bus if we won't hurry.", correct: false },
+        { text: "If she will call, I'll answer the phone.", correct: false },
+        {
+          text: "You'll feel better if you will get some rest.",
+          correct: false,
+        },
+
+        // 17. Second conditional
+        {
+          text: "If I won a lot of money, I'd buy a sports car.",
+          correct: true,
+        },
+        {
+          text: "If she studied harder, she would pass the test.",
+          correct: true,
+        },
+        { text: "If I were you, I would apologise.", correct: true },
+        { text: "We would travel more if we had more time.", correct: true },
+        { text: "If he asked me, I would help him.", correct: true },
+        {
+          text: "I would live abroad if I spoke another language.",
+          correct: true,
+        },
+        {
+          text: "If I win a lot of money, I'd buy a sports car.",
+          correct: false,
+        },
+        {
+          text: "If she studies harder, she would pass the test.",
+          correct: false,
+        },
+        { text: "If I was you, I would apologise.", correct: false },
+        { text: "We would travel more if we have more time.", correct: false },
+        { text: "If he asks me, I would help him.", correct: false },
+        {
+          text: "I would live abroad if I speak another language.",
+          correct: false,
+        },
+
+        // 18. Third conditional
+        {
+          text: "If you had worked harder yesterday, you would have finished by now.",
+          correct: true,
+        },
+        {
+          text: "If there hadn't been so many delays, we wouldn't have missed the start.",
+          correct: true,
+        },
+        {
+          text: "If I had known about the party, I would have come.",
+          correct: true,
+        },
+        {
+          text: "She would have passed the exam if she had studied.",
+          correct: true,
+        },
+        {
+          text: "We wouldn't have got lost if we had brought a map.",
+          correct: true,
+        },
+        {
+          text: "If he had left earlier, he wouldn't have missed the train.",
+          correct: true,
+        },
+        {
+          text: "If you worked harder yesterday, you would have finished by now.",
+          correct: false,
+        },
+        {
+          text: "If there hadn't been so many delays, we didn't miss the start.",
+          correct: false,
+        },
+        {
+          text: "If I had known about the party, I would came.",
+          correct: false,
+        },
+        {
+          text: "She would have passed the exam if she studied.",
+          correct: false,
+        },
+        {
+          text: "We wouldn't have got lost if we brought a map.",
+          correct: false,
+        },
+        {
+          text: "If he left earlier, he wouldn't have missed the train.",
+          correct: false,
+        },
+
+        // 19. Reflexive & reciprocal pronouns
+        {
+          text: "I'm using an app to teach myself a new language.",
+          correct: true,
+        },
+        { text: "I hope you enjoy yourselves later.", correct: true },
+        { text: "He cut himself while cooking.", correct: true },
+        { text: "They looked at each other and laughed.", correct: true },
+        { text: "She made herself a cup of tea.", correct: true },
+        { text: "We help each other with our homework.", correct: true },
+        {
+          text: "I'm using an app to teach me a new language.",
+          correct: false,
+        },
+        { text: "I hope you enjoy you later.", correct: false },
+        { text: "He cut him while cooking.", correct: false },
+        { text: "They looked at themselves and laughed.", correct: false },
+        { text: "She made her a cup of tea.", correct: false },
+        { text: "We help ourselves with our homework.", correct: false },
+
+        // 20. Adjectives ending in '-ing' and '-ed'
+        {
+          text: "That clicking noise you make when you eat is very annoying.",
+          correct: true,
+        },
+        { text: "I was surprised to see you here.", correct: true },
+        { text: "The movie was so boring that I fell asleep.", correct: true },
+        { text: "She felt exhausted after the long trip.", correct: true },
+        { text: "This is a really interesting book.", correct: true },
+        { text: "I'm excited about the school trip next week.", correct: true },
+        {
+          text: "That clicking noise you make when you eat is very annoyed.",
+          correct: false,
+        },
+        { text: "I was surprising to see you here.", correct: false },
+        { text: "The movie was so bored that I fell asleep.", correct: false },
+        { text: "She felt exhausting after the long trip.", correct: false },
+        { text: "This is a really interested book.", correct: false },
+        {
+          text: "I'm exciting about the school trip next week.",
+          correct: false,
+        },
+
+        // 21. Intensifiers
+        { text: "You played exceptionally well today.", correct: true },
+        { text: "That was a really interesting story.", correct: true },
+        { text: "It's absolutely freezing outside.", correct: true },
+        { text: "She's extremely talented at painting.", correct: true },
+        { text: "This soup is incredibly spicy.", correct: true },
+        { text: "He was completely exhausted after the race.", correct: true },
+        { text: "You played exceptional well today.", correct: false },
+        { text: "That was a real interesting story.", correct: false },
+        { text: "It's absolute freezing outside.", correct: false },
+        { text: "She's extreme talented at painting.", correct: false },
+        { text: "This soup is incredible spicy.", correct: false },
+        { text: "He was complete exhausted after the race.", correct: false },
+
+        // 22. Ordering of multiple adjectives
+        { text: "It's a beautiful, old house.", correct: true },
+        { text: "The big, red car.", correct: true },
+        { text: "She wore a lovely, long dress.", correct: true },
+        { text: "He has a small, black dog.", correct: true },
+        { text: "We stayed in a cosy, little cabin.", correct: true },
+        { text: "They bought a modern, white sofa.", correct: true },
+        { text: "It's an old, beautiful house.", correct: false },
+        { text: "The red, big car.", correct: false },
+        { text: "She wore a long, lovely dress.", correct: false },
+        { text: "He has a black, small dog.", correct: false },
+        { text: "We stayed in a little, cosy cabin.", correct: false },
+        { text: "They bought a white, modern sofa.", correct: false },
+
+        // 23. Comparatives with adverbs
+        {
+          text: "Can you walk more slowly please? I can't keep up!",
+          correct: true,
+        },
+        { text: "The bird sings more quietly in the morning.", correct: true },
+        {
+          text: "She speaks English more fluently than her brother.",
+          correct: true,
+        },
+        { text: "He drives more carefully than his sister.", correct: true },
+        { text: "Please explain it more clearly.", correct: true },
+        { text: "The train runs more frequently on weekdays.", correct: true },
+        {
+          text: "Can you walk slower more please? I can't keep up!",
+          correct: false,
+        },
+        { text: "The bird sings quietly more in the morning.", correct: false },
+        {
+          text: "She speaks English fluently more than her brother.",
+          correct: false,
+        },
+        { text: "He drives careful more than his sister.", correct: false },
+        { text: "Please explain it clear more.", correct: false },
+        { text: "The train runs frequently more on weekdays.", correct: false },
+
+        // 24. Adverbs with perfect tenses
+        { text: "I've already watched this film.", correct: true },
+        {
+          text: "Ben has been playing a lot of football recently.",
+          correct: true,
+        },
+        { text: "She has just finished her homework.", correct: true },
+        { text: "We haven't seen that movie yet.", correct: true },
+        { text: "He has recently moved to a new apartment.", correct: true },
+        { text: "I have never eaten sushi before.", correct: true },
+        { text: "I've already watch this film.", correct: false },
+        {
+          text: "Ben has been played a lot of football recently.",
+          correct: false,
+        },
+        { text: "She has just finish her homework.", correct: false },
+        { text: "We haven't see that movie yet.", correct: false },
+        { text: "He has recent moved to a new apartment.", correct: false },
+        { text: "I have never eating sushi before.", correct: false },
+
+        // 25. Discourse markers
+        {
+          text: "Firstly, we need to plan the trip; secondly, we should book the hotel.",
+          correct: true,
+        },
+        {
+          text: "Moreover, the restaurant offers a great view of the city.",
+          correct: true,
+        },
+        { text: "However, the weather might change our plans.", correct: true },
+        { text: "As a result, the game was cancelled.", correct: true },
+        { text: "Anyway, let's talk about something else.", correct: true },
+        {
+          text: "Finally, don't forget to bring your passport.",
+          correct: true,
+        },
+        {
+          text: "Firstly, we need to plan the trip; secondly, we should booking the hotel.",
+          correct: false,
+        },
+        {
+          text: "Moreover, the restaurant offer a great view of the city.",
+          correct: false,
+        },
+        {
+          text: "However, the weather might changes our plans.",
+          correct: false,
+        },
+        { text: "As a result, the game were cancelled.", correct: false },
+        { text: "Anyway, let's talking about something else.", correct: false },
+        {
+          text: "Finally, don't forgetting to bring your passport.",
+          correct: false,
+        },
+
+        // 26. Question tags
+        { text: "The race starts over there, doesn't it?", correct: true },
+        { text: "The book's over there, isn't it?", correct: true },
+        { text: "You like coffee, don't you?", correct: true },
+        { text: "She isn't coming today, is she?", correct: true },
+        { text: "They can swim, can't they?", correct: true },
+        { text: "He didn't call you, did he?", correct: true },
+        { text: "The race starts over there, doesn't he?", correct: false },
+        { text: "The book's over there, isn't they?", correct: false },
+        { text: "You like coffee, do you?", correct: false },
+        { text: "She isn't coming today, isn't she?", correct: false },
+        { text: "They can swim, don't they?", correct: false },
+        { text: "He didn't call you, does he?", correct: false },
+      ];
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let wrongAnswers = [];
+
+      const startWrapper = document.getElementById("startWrapper");
+      const gameWrapper = document.getElementById("gameWrapper");
+      const resultsWrapper = document.getElementById("resultsWrapper");
+      const questionSentenceEl = document.getElementById("questionSentence");
+      const rightBtn = document.getElementById("rightBtn");
+      const wrongBtn = document.getElementById("wrongBtn");
+      const progressEl = document.getElementById("progress");
+      const scoreEl = document.getElementById("score");
+      const scoreSubEl = document.getElementById("scoreSub");
+      const mistakesTitleEl = document.getElementById("mistakesTitle");
+      const mistakesListEl = document.getElementById("mistakesList");
+      const playAgainBtn = document.getElementById("playAgainBtn");
+
+      function shuffle(array) {
+        const arr = array.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function startGame() {
+        questions = shuffle(GRAMMAR_BANK).slice(0, QUESTIONS_PER_GAME);
+        currentIndex = 0;
+        score = 0;
+        wrongAnswers = [];
+        startWrapper.style.display = "none";
+        resultsWrapper.style.display = "none";
+        gameWrapper.style.display = "flex";
+        progressEl.style.display = "block";
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        const q = questions[currentIndex];
+        progressEl.textContent =
+          "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
+        questionSentenceEl.textContent = q.text;
+
+        rightBtn.disabled = false;
+        wrongBtn.disabled = false;
+        rightBtn.classList.remove("correct", "wrong", "dim");
+        wrongBtn.classList.remove("correct", "wrong", "dim");
+      }
+
+      function handleAnswer(userSaysRight) {
+        rightBtn.disabled = true;
+        wrongBtn.disabled = true;
+
+        const q = questions[currentIndex];
+        const isCorrectAnswer = userSaysRight === q.correct;
+        const chosenBtn = userSaysRight ? rightBtn : wrongBtn;
+        const otherBtn = userSaysRight ? wrongBtn : rightBtn;
+        const trueBtn = q.correct ? rightBtn : wrongBtn;
+
+        if (isCorrectAnswer) {
+          chosenBtn.classList.add("correct");
+          otherBtn.classList.add("dim");
+        } else {
+          chosenBtn.classList.add("wrong");
+          trueBtn.classList.add("correct");
+        }
+
+        if (isCorrectAnswer) {
+          score++;
+        } else {
+          wrongAnswers.push({
+            text: q.text,
+            wasCorrect: q.correct,
+          });
+        }
+
+        setTimeout(() => {
+          currentIndex++;
+          if (currentIndex < questions.length) {
+            renderQuestion();
+          } else {
+            showResults();
+          }
+        }, 900);
+      }
+
+      rightBtn.addEventListener("click", () => handleAnswer(true));
+      wrongBtn.addEventListener("click", () => handleAnswer(false));
+
+      function showResults() {
+        gameWrapper.style.display = "none";
+        progressEl.style.display = "none";
+        resultsWrapper.style.display = "flex";
+
+        scoreEl.textContent = score + " / " + QUESTIONS_PER_GAME;
+        if (score === QUESTIONS_PER_GAME) {
+          scoreSubEl.textContent = "Perfect score! 🎉";
+        } else if (score >= QUESTIONS_PER_GAME * 0.7) {
+          scoreSubEl.textContent = "Great job!";
+        } else {
+          scoreSubEl.textContent = "Keep practising!";
+        }
+
+        mistakesListEl.innerHTML = "";
+        if (wrongAnswers.length > 0) {
+          mistakesTitleEl.style.display = "block";
+          wrongAnswers.forEach((w) => {
+            const li = document.createElement("li");
+            const sentSpan = document.createElement("span");
+            sentSpan.className = "sentence";
+            sentSpan.textContent = w.text;
+            const verdictSpan = document.createElement("span");
+            verdictSpan.className =
+              "verdict" + (w.wasCorrect ? " was-right" : "");
+            verdictSpan.textContent = w.wasCorrect
+              ? "This sentence was RIGHT"
+              : "This sentence was WRONG";
+            li.appendChild(sentSpan);
+            li.appendChild(verdictSpan);
+            mistakesListEl.appendChild(li);
+          });
+        } else {
+          mistakesTitleEl.style.display = "none";
+        }
+      }
+
+      // start-screen buttons pick the question count and begin the game
+      document.querySelectorAll(".start-buttons .btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          QUESTIONS_PER_GAME = parseInt(btn.dataset.count, 10);
+          startGame();
+        });
+      });
+
+      // play again re-shows the start screen so a new count can be picked
+      playAgainBtn.addEventListener("click", () => {
+        resultsWrapper.style.display = "none";
+        startWrapper.style.display = "flex";
+      });
+    </script>
+  </body>
+</html>
