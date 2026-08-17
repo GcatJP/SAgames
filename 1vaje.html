@@ -39,8 +39,8 @@
           "Chalkboard SE", "Chalkboard", "Comic Neue", "Comic Sans MS", cursive;
         --font-jp:
           "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-        --colour-btn-face: darkgrey;
-        --colour-btn-active: darkgrey;
+        --colour-btn-face: #8b5a2b;
+        --colour-btn-active: #8b5a2b;
         --colour-btn-border: #000000;
         --colour-heading-text: orange;
         --colour-correct: #4caf50;
@@ -53,7 +53,7 @@
         position: fixed;
         inset: 0;
         z-index: 100;
-        background: grey;
+        background: darkred;
         align-items: center;
         justify-content: center;
         text-align: center;
@@ -78,7 +78,7 @@
 
       body {
         font-family: var(--font-chalk);
-        background-color: grey; /* dark pink */
+        background-color: darkred; /* dark pink */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -601,7 +601,7 @@
           "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
         questionJpEl.textContent = q.jp; // changed from q.jp
 
-        const distractorPool = VERB_BANK.filter((v) => v.en !== q.en);
+        const distractorPool = ADJ_BANK.filter((v) => v.en !== q.en);
         const distractors = shuffle(distractorPool).slice(0, 2);
         const options = shuffle([q, ...distractors]);
 
