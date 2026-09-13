@@ -2071,7 +2071,15 @@
         const distractorPool = QUESTIONS_BANK.filter(
           (v) => v.en !== q.en && v.type === q.type,
         );
-        const distractors = shuffle(distractorPool).slice(0, 2);
+        const distractors = [];
+        const usedEn = new Set([q.en]);
+        for (const word of shuffle(distractorPool)) {
+          if (distractors.length >= 2) break;
+          if (!usedEn.has(word.en)) {
+            distractors.push(word);
+            usedEn.add(word.en);
+          }
+        }
         const options = shuffle([q, ...distractors]);
 
         answersEl.innerHTML = "";
