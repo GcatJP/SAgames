@@ -133,7 +133,31 @@
         pointer-events: none;
         user-select: none;
       }
-
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: gray;
+        color: black;
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-text-stroke: 0;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
+      }
       /* LANDSCAPE */
       @media screen and (orientation: landscape) {
         body {
@@ -265,20 +289,19 @@
   </head>
 
   <body>
+    <a class="back-btn" href="index.html">← Back</a>
     <h1>Speaking Adventure</h1>
 
     <div class="grid-wrapper">
       <div class="grid" id="main-grid">
-        <a class="btn" href="study.html" style="background-color: gray">
-          <span class="btn-text">Study
-
-          </span>
-          <img class="btn-icon" src="s1.png" alt="" />
+        <a class="btn" href="A2.html" style="background-color: gray">
+          <span class="btn-text">CEFR A2</span>
+          <img class="btn-icon" src="si.png" alt="" />
         </a>
 
-        <a class="btn" href="audio.html" style="background-color: #8b5a2b">
-          <span class="btn-text">Audio</Audio></span>
-          <img class="btn-icon" src="k1.png" alt="" />
+        <a class="btn" href="B1.html" style="background-color: #8b5a2b">
+          <span class="btn-text">CEFR B1</span>
+          <img class="btn-icon" src="ki.png" alt="" />
         </a>
       </div>
     </div>

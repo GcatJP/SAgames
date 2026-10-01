@@ -18,14 +18,7 @@
 
     <link rel="manifest" href="manifest.json" />
 
-    <title>Speaking Adventure</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap"
-      rel="stylesheet"
-    />
+    <title>Speaking Adventure Audio</title>
 
     <style>
       *,
@@ -40,10 +33,11 @@
       :root {
         --font-chalk:
           "Chalkboard SE", "Comic Sans MS", "Segoe Print", sans-serif;
-        --colour-btn-face: black;
+        --colour-btn-face: #ffd600;
         --colour-btn-active: darkgray;
         --colour-btn-border: #000000;
         --colour-heading-text: orange;
+        --colour-btn-brown: #8b5a2b;
       }
 
       html,
@@ -60,14 +54,14 @@
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
+        background-attachment: fixed;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
         min-height: 100vh;
         min-height: 100dvh;
-        overflow: hidden;
-        transition: background 0.3s ease;
+        overflow-y: auto;
       }
 
       h1 {
@@ -81,33 +75,33 @@
       }
 
       .grid-wrapper {
-        flex: 1;
+        flex: 1 0 auto;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         width: 100%;
-        min-height: 0;
       }
 
       .btn {
         font-family: var(--font-chalk);
         font-weight: bold;
         color: yellow;
-        background: grey;
+        background: darkred;
         border: 2px solid var(--colour-btn-border);
         border-radius: 10px;
         text-decoration: none;
+        text-align: center;
+        line-height: 1.05;
         cursor: pointer;
         display: flex;
         align-items: center;
-        justify-content: flex-start;
-        gap: 0.4em;
+        justify-content: center;
         padding: 0 0.6em;
         width: 100%;
         overflow: hidden;
         -webkit-user-select: none;
         user-select: none;
-        -webkit-text-stroke: 2px darkred;
+        -webkit-text-stroke: 1px black;
         transition:
           transform 0.1s ease,
           background 0.15s ease;
@@ -118,168 +112,143 @@
         background: var(--colour-btn-active);
       }
 
-      .btn-text {
-        flex: 1;
-        text-align: center;
-        line-height: 1.05;
+      .back-btn {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top, 16px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        background: var(--colour-btn-face);
+        color: var(--colour-btn-border);
+        border: 2px solid var(--colour-btn-border);
+        border-radius: 999px;
+        padding: 0.4em 0.9em;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1rem;
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-text-stroke: 0;
+        transition: transform 0.1s ease;
+      }
+      .back-btn:active {
+        transform: translateY(2px);
+        background: var(--colour-btn-active);
       }
 
-      .btn-icon {
-        height: 78%;
-        width: auto;
-
-        flex-shrink: 0;
-        object-fit: contain;
-        pointer-events: none;
-        user-select: none;
-      }
-
-      /* LANDSCAPE */
+      /* LANDSCAPE: 2 columns, page scrolls */
       @media screen and (orientation: landscape) {
         body {
           background-image: url("saland.png");
-          background-size: cover;
-          background-position: center center;
-          background-repeat: no-repeat;
-          overflow: hidden;
         }
 
         h1 {
-          font-size: clamp(2rem, 7vw, 7rem);
+          font-size: clamp(2rem, 6vw, 5rem);
           padding: 0.1em 0.5em;
-          margin-top: 5vh;
-          margin-bottom: -8vh;
+          margin-top: 3vh;
         }
 
         .grid-wrapper {
-          padding: 1vh 2vw 2vh;
-          margin-top: 2vh;
+          padding: 2vh 2vw 6vh;
         }
 
         .grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          grid-template-rows: 1fr;
-          gap: clamp(10px, 3vw, 30px);
-          width: min(90vw, 1000px);
+          gap: clamp(8px, 1.6vw, 18px);
+          width: min(92vw, 900px);
         }
 
         .btn {
-          font-size: clamp(1rem, 5vw, 3.6rem);
-          height: clamp(90px, 45vh, 240px);
+          font-size: clamp(1.1rem, 3.4vw, 2.6rem);
+          height: clamp(60px, 17vh, 110px);
         }
       }
 
       /* LANDSCAPE IPHONE */
       @media screen and (orientation: landscape) and (max-height: 450px) {
         body {
-          background-image: url("saland.png");
-          background-size: cover;
-          background-position: center center;
-          background-repeat: no-repeat;
           width: 100vw !important;
           min-width: 100vw !important;
           overflow-x: hidden !important;
         }
 
         h1 {
-          font-size: clamp(1rem, 7vw, 4rem) !important;
+          font-size: clamp(1rem, 5vw, 2.4rem) !important;
           padding: 0.1em 0.5em !important;
-          margin-top: -3vh !important;
-          margin-bottom: -8vh !important;
-        }
-
-        .grid-wrapper {
-          padding: 1vh 6vw 2vh;
-          margin-top: 1vh;
-        }
-
-        .grid {
-          gap: clamp(10px, 3vw, 24px) !important;
+          margin-top: 1vh !important;
         }
 
         .btn {
-          height: clamp(55px, 34vh, 140px) !important;
-          font-size: clamp(0.85rem, 4.5vw, 2.6rem) !important;
+          height: clamp(46px, 18vh, 68px) !important;
+          font-size: clamp(0.85rem, 2.4vw, 1.4rem) !important;
         }
       }
 
-      /* PORTRAIT */
+      /* PORTRAIT: single column, page scrolls */
       @media screen and (orientation: portrait) {
         body {
-          overflow-y: auto;
           background-image: url("saport.png");
-          background-size: cover;
-          background-position: center center;
-          background-repeat: no-repeat;
         }
 
         h1 {
-          font-size: clamp(1.5rem, 12vw, 4rem);
+          font-size: clamp(1.5rem, 10vw, 3.6rem);
           padding: 0.3em 0.5em;
+          margin-top: 56px;
         }
 
         .grid-wrapper {
-          padding: 2vw 9vw 6vw;
+          padding: 2vw 9vw 10vw;
         }
 
         .grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: clamp(12px, 6vw, 60px);
+          gap: clamp(12px, 3.5vw, 26px);
           width: 100%;
           max-width: 520px;
         }
 
         .btn {
-          font-size: clamp(1.2rem, 10vw, 4rem);
-          height: clamp(90px, 26vw, 240px);
+          font-size: clamp(1.1rem, 6vw, 2.4rem);
+          height: clamp(64px, 17vw, 110px);
         }
       }
 
       /* PORTRAIT IPHONE */
       @media screen and (orientation: portrait) and (max-width: 430px) {
         h1 {
-          font-size: clamp(1.1rem, 10.5vw, 3.9rem) !important;
+          font-size: clamp(1.1rem, 8.5vw, 3rem) !important;
           padding: 0.3em 0.5em !important;
           line-height: 1;
-          margin-top: max(40px, env(safe-area-inset-top, 30px)) !important;
-        }
-
-        .grid-wrapper {
-          padding: 3.5vh 9vw 2vw !important;
-        }
-
-        .grid {
-          gap: 28px !important;
-          width: 100% !important;
-          margin-top: -5vh !important;
+          margin-top: max(56px, env(safe-area-inset-top, 30px)) !important;
         }
 
         .btn {
-          height: clamp(90px, 34vw, 200px) !important;
-          font-size: clamp(1.1rem, 11vw, 3.4rem) !important;
+          height: clamp(64px, 19vw, 100px) !important;
+          font-size: clamp(1.05rem, 6vw, 2rem) !important;
         }
       }
     </style>
   </head>
 
   <body>
-    <h1>Speaking Adventure</h1>
+    <a class="back-btn" href="index.html">← Back</a>
+    <h1>Speaking Adventure Audio</h1>
 
     <div class="grid-wrapper">
-      <div class="grid" id="main-grid">
-        <a class="btn" href="study.html" style="background-color: gray">
-          <span class="btn-text">Study
-
-          </span>
-          <img class="btn-icon" src="s1.png" alt="" />
-        </a>
-
-        <a class="btn" href="audio.html" style="background-color: #8b5a2b">
-          <span class="btn-text">Audio</Audio></span>
-          <img class="btn-icon" src="k1.png" alt="" />
-        </a>
+      <div class="grid" id="audio-grid">
+        <!-- Change the text of each button to the track name -->
+        <a class="btn" href="audio-player.html?track=t1">Lucy's Big Day</a>
+        <a class="btn" href="audio-player.html?track=t2">The Lost Wallet</a>
+        <a class="btn" href="audio-player.html?track=t3">Sumo</a>
+        <a class="btn" href="audio-player.html?track=t4">Unit 28</a>
+        <a class="btn" href="audio-player.html?track=t5">Unit 39a</a>
+        <a class="btn" href="audio-player.html?track=t6">Unit 39b</a>
+        <a class="btn" href="audio-player.html?track=t7">Unit 39c</a>
+        <a class="btn" href="audio-player.html?track=t8">Unit 39d</a>
       </div>
     </div>
   </body>
