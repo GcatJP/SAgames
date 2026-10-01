@@ -281,7 +281,34 @@
       .btn:disabled {
         cursor: default;
       }
-
+      .fix-box {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6em;
+        background: white;
+        border: 3px solid var(--colour-correct);
+        border-radius: 16px;
+        padding: 0.9em 1.1em;
+        margin-top: 3vh;
+        width: 100%;
+        max-width: 560px;
+        text-align: center;
+      }
+      .fix-box.show {
+        display: flex;
+      }
+      .fix-label {
+        font-size: clamp(0.75rem, 3vw, 0.95rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--colour-correct);
+      }
+      .fix-sentence {
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        color: #222;
+        line-height: 1.4;
+      }
       /* RESULTS SCREEN */
       .results-wrapper {
         display: none;
@@ -437,6 +464,11 @@
         <button class="btn btn-wrong" id="wrongBtn">
           <span class="icon">✗</span><span class="label">WRONG</span>
         </button>
+      </div>
+      <div class="fix-box" id="fixBox">
+        <div class="fix-label">Correct sentence</div>
+        <div class="fix-sentence" id="fixSentence"></div>
+        <button class="play-again" id="nextBtn">Next →</button>
       </div>
     </div>
 
@@ -843,7 +875,10 @@
         { text: "We not are finished packing yet.", correct: false },
         { text: "I haven't do my chores yet.", correct: false },
       ];
-
+      // each wrong sentence's correct version is the entry 6 places earlier
+      GRAMMAR_BANK.forEach((item, i) => {
+        if (!item.correct) item.fix = GRAMMAR_BANK[i - 6].text;
+      });
       let questions = [];
       let currentIndex = 0;
       let score = 0;
@@ -861,7 +896,9 @@
       const mistakesTitleEl = document.getElementById("mistakesTitle");
       const mistakesListEl = document.getElementById("mistakesList");
       const playAgainBtn = document.getElementById("playAgainBtn");
-
+      const fixBox = document.getElementById("fixBox");
+      const fixSentenceEl = document.getElementById("fixSentence");
+      const nextBtn = document.getElementById("nextBtn");
       function shuffle(array) {
         const arr = array.slice();
         for (let i = arr.length - 1; i > 0; i--) {
@@ -884,6 +921,7 @@
       }
 
       function renderQuestion() {
+        fixBox.classList.remove("show");
         const q = questions[currentIndex];
         progressEl.textContent =
           "Question " + (currentIndex + 1) + " / " + QUESTIONS_PER_GAME;
@@ -922,19 +960,26 @@
           });
         }
 
-        setTimeout(() => {
-          currentIndex++;
-          if (currentIndex < questions.length) {
-            renderQuestion();
-          } else {
-            showResults();
-          }
-        }, 900);
+        if (q.correct) {
+          setTimeout(advance, 900);
+        } else {
+          fixSentenceEl.textContent = q.fix;
+          fixBox.classList.add("show");
+        }
       }
 
       rightBtn.addEventListener("click", () => handleAnswer(true));
       wrongBtn.addEventListener("click", () => handleAnswer(false));
+      function advance() {
+        currentIndex++;
+        if (currentIndex < questions.length) {
+          renderQuestion();
+        } else {
+          showResults();
+        }
+      }
 
+      nextBtn.addEventListener("click", advance);
       function showResults() {
         gameWrapper.style.display = "none";
         progressEl.style.display = "none";
