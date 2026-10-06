@@ -261,6 +261,32 @@
           font-size: clamp(1.1rem, 11vw, 3.4rem) !important;
         }
       }
+           /* FOOTER CREDIT */
+      .credit {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        font-family: var(--font-chalk);
+        font-weight: bold;
+        font-size: 1.8rem;
+        color: #ffffff;
+        -webkit-text-stroke: 4px darkred;
+        paint-order: stroke fill;
+        letter-spacing: 0.02em;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      /* Phones (portrait, and landscape where height is small): centre it */
+      @media screen and (max-width: 600px), screen and (max-height: 450px) {
+        .credit {
+          right: 0;
+          left: 0;
+          text-align: center;
+          font-size: 1rem;
+          bottom: 6px;
+        }
+      }
     </style>
   </head>
 
@@ -282,5 +308,6 @@
         </a>
       </div>
     </div>
+     <div class="credit">Created by Graeme Cattermole</div>
   </body>
 </html>
